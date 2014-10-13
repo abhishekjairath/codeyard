@@ -40,5 +40,6 @@ module.exports = {
       user: 'EMAIL_ID',
       pass: 'PASSWORD'
     }
-  }
+  },
+  repoPath : '/home/abhishek/Documents/repos/'
 };

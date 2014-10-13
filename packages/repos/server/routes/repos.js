@@ -1,6 +1,6 @@
 'use strict';
 
-var repos = require('../controller/repos'); 
+var repos = require('../controllers/repos'); 
 
 // The Package is past automatically as first parameter
 module.exports = function(Repos, app, auth, database) {
@@ -26,5 +26,8 @@ module.exports = function(Repos, app, auth, database) {
     });
   });
 
-  app.post('/repos/create', repos.create);
+  app.post('/repos/create', repos.createRepo);
+  app.post('/repos/delete', repos.deleteRepo);
+  app.post('/repos/upload', repos.uploadFile);
+  app.post('/repos/create/folder', repos.createFolder);
 };

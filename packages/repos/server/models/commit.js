@@ -44,7 +44,7 @@ var CommitSchema = new Schema({
     type: Schema.ObjectId,
     ref: 'Repo'
   },
-  changes: [{ChangesSchema}]
+  changes: [ChangesSchema]
 });
 
 /**

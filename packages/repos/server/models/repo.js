@@ -7,29 +7,7 @@ var mongoose = require('mongoose'),
   Schema = mongoose.Schema,
   crypto = require('crypto');
 
-/**
- * Validations
- */
-/*var validatePresenceOf = function(value) {
-  // If you are authenticating by any of the oauth strategies, don't validate.
-  return (this.provider && this.provider !== 'local') || (value && value.length);
-};
 
-var validateUniqueEmail = function(value, callback) {
-  var User = mongoose.model('User');
-  User.find({
-    $and: [{
-      email: value
-    }, {
-      _id: {
-        $ne: this._id
-      }
-    }]
-  }, function(err, user) {
-    callback(err || user.length === 0);
-  });
-};
-*/
 /**
  * Repo Schema
  */
@@ -38,6 +16,10 @@ var RepoSchema = new Schema({
   name: {
     type: String,
     required: true
+  },
+  slug:{
+    type: String,
+    unique: true
   },
   created:{
     type: Date,
@@ -55,11 +37,12 @@ var RepoSchema = new Schema({
     type: Schema.ObjectId,
     ref: 'User'
   }],
-  path: String,
   ispublic:Boolean,
   desc: String,
   files:[{
-    type:String
+    path:String,
+    name:String,
+    tag: String
   }]
 });
 
@@ -103,5 +86,5 @@ UserSchema.methods = {
   
 };
 */
-
 mongoose.model('Repo', RepoSchema);
+
