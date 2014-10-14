@@ -11,7 +11,9 @@ var mongoose = require('mongoose'),
   crypto = require('crypto'),
   nodemailer = require('nodemailer'),
   fs = require('fs'),
-  makeslug = require('slug');
+  fse = require('fs.extra'),
+  makeslug = require('slug'),
+  repoPath = config.repoPath;
 
 
 var createSlug = function(type,repoName,callback){
@@ -27,11 +29,9 @@ var createSlug = function(type,repoName,callback){
 			if(!repo){
 				var num = Math.floor(Math.random() * (max - min + 1)) + min;
 				newslug = newslug+'-'+num;
-				console.log(newslug);
 				callback(newslug);
 			}
 			else{
-				console.log(newslug);
 				callback(newslug);
 			}
 		});
@@ -46,31 +46,36 @@ var createSlug = function(type,repoName,callback){
 exports.createRepo = function(req,res){
 	var repo = new Repo();
 	var result = {};
-	repo.name = req.body.name;
+	repo.name = req.body.reponame;
 	repo.owner = req.user._id;
+	repo.contributors.push(req.user._id);
 	repo.ispublic = req.body.ispublic;
 	repo.desc = req.body.desc;
-	createSlug('repo',req.body.name, function(newslug){
+	createSlug('repo',req.body.reponame, function(newslug){
 		if(newslug){
 		repo.slug = newslug;
-		fs.mkdir(config.repoPath+repo.slug,function(err){
+		fs.mkdir(repoPath+repo.slug,function(err){
 			if(err){
 				console.log(err);
 				res.send("There was an error while creating directory");
 			}
 			else{
 				repo.save(function(error,response,numberAffected){
-					if(error)
-						console.log("There was an error while saving repo info in DB");
+					if(error){
+						console.log(error);
+						result = {
+							'error':1,
+							'error_msg':'There was an error while saving repo'
+						};
+					}
 					else
 					{
-						console.log("Repo info save successfully");
 						result = {
-							'success':1,
-							'msg': 'Repo made succcessfully'
+							'error':0,
+							'error_msg': 'Repo made succcessfully'
 						};
-						res.jsonp(result);
 					}
+					res.jsonp(result);
 				});
 			}
 		});
@@ -78,6 +83,28 @@ exports.createRepo = function(req,res){
 	    else{
 	    	res.send("There was an error while making the repo");
 	    }
+	});
+};
+
+exports.getRepo = function(req,res){
+	var repoSlug = req.params.reposlug,
+		result = {};
+	Repo.findOne({slug:repoSlug},function(err,response){
+		if(err){
+			console.log(err);
+			result = {
+				'error':1,
+				'error_msg':'There was an error while fetching repo info.'
+			};
+		}
+		else{
+			result = {
+				'error':0,
+				'error_msg':null,
+				'repo':response
+			};
+		}
+		res.jsonp(result);
 	});
 };
 
@@ -91,13 +118,13 @@ exports.deleteRepo = function(req,res){
 				console.log(err)
 				result= {
 					'error':1,
-					'error_msg':err
+					'error_msg':'The repo could not be found in DB'
 				};
 				res.jsonp(result);
 			}
 			else if( response && response.owner.equals(owner)){
-				fs.rmdir(config.repoPath+repoSlug,function(error){
-					if(err){
+				fse.rmrf(repoPath+repoSlug,function(error){
+					if(error){
 						console.log(error);
 						result = {
 							'error' : 1,
@@ -138,13 +165,12 @@ exports.deleteRepo = function(req,res){
 
 exports.createFolder = function(req,res){
 	var folderName = req.body.folderName,
-		path = config.repoPath,
 		result = {},
-		parentPath = req.body.parentPath,
+		pathInRepo = req.body.path,  
 		repoSlug = req.body.repoSlug;
 		createSlug('folder',folderName,function(folderSlug){
 			if(folderSlug){
-				fs.mkdir(parentPath+folderSlug,function(err,response){
+				fs.mkdir(repoPath+pathInRepo+folderSlug,function(err,response){
 					if(err){
 						if(err.errno == 47){
 							result = {
@@ -162,7 +188,7 @@ exports.createFolder = function(req,res){
 						res.jsonp(result);
 					}
 					else{
-						Repo.findOneAndUpdate({slug:repoSlug},{$push:{files:{path:parentPath+folderSlug,name:folderName,tag:'folder'}}},function(error,response1){
+						Repo.findOneAndUpdate({slug:repoSlug},{$push:{files:{path:pathInRepo+folderSlug,name:folderName,tag:'folder'}}},function(error,response1){
 							if(error){
 								console.log(error);
 								result = {
@@ -173,7 +199,7 @@ exports.createFolder = function(req,res){
 							else{
 								result = {
 									'error':0,
-									'error_msg':null
+									'error_msg':'Folder created successfully'
 								};
 							}
 							res.jsonp(result);
@@ -191,7 +217,7 @@ exports.uploadFile = function(req,res){
 	fs.readFile(req.files.file.path,function(err,data){
 		var extension = req.files.file.extension,
 			fileName = req.files.file.originalname.replace('.'+extension,''),
-			filePath = config.repoPath+pathInRepo+fileName,
+			filePath = config.repoPath+pathInRepo+fileName;
 			
     	if(err){
     		result = {
@@ -211,7 +237,7 @@ exports.uploadFile = function(req,res){
                 	res.jsonp(result);
                 }
                 else {
-                    Repo.findOneAndUpdate({slug:repoSlug},{$push:{files:{path:filePath, tag:extension}}},function(error,response){
+                    Repo.findOneAndUpdate({slug:repoSlug},{$push:{files:{path:pathInRepo+fileName, tag:extension, name:fileName}}},function(error,response){
                     	if(error){
                     		console.log(error);
                     		result = {
@@ -230,5 +256,61 @@ exports.uploadFile = function(req,res){
                 }
     	    });
         }
+	});
+};
+
+exports.deleteFile = function(req,res){
+	var fileId = req.body.fileId,
+		result = {};
+		fs.unlink(repoPath+filePath, function(err){
+			if(err){
+				console.log(err);
+				result = {
+					'error':1,
+					'error_msg':'Unable to delete the file'
+				};
+				res.jsonp(result);
+			}
+			else{
+				Repo.findOneAndUpdate({'files.path':filePath},{$pull:{files:{path:filePath}}},function(error,response){
+					if(error){
+						console.log(error);
+						result = {
+							'error':1,
+							'error_msg':'Unable to delete the file from the DB'
+						};
+					}
+					else{
+						result = {
+							'error':0,
+							'error_msg':'FIle deleted successfully'
+						};
+					}
+					res.jsonp(result);
+				});
+			}
+		});
+};
+
+exports.getFile = function(req,res){
+	var filePath = req.params.filepath,
+		result = {};
+
+	fs.readFile(repoPath+filePath,"utf8",function(err,data){
+		if(err){
+			console.log(err);
+			result = {
+				'error':1,
+				'error_msg':'Cannot find the required file'
+			};
+		}
+		else{
+			result = {
+				'error':0,
+				'error_msg':null,
+				'data':data
+			};
+		}
+		res.jsonp(result);
 	});
 };

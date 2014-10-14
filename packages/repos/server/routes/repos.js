@@ -26,8 +26,19 @@ module.exports = function(Repos, app, auth, database) {
     });
   });
 
-  app.post('/repos/create', repos.createRepo);
-  app.post('/repos/delete', repos.deleteRepo);
-  app.post('/repos/upload', repos.uploadFile);
-  app.post('/repos/create/folder', repos.createFolder);
+
+/**************************************/
+  app.post('/repos', repos.createRepo);
+  app.delete('/repos', repos.deleteRepo);
+  app.get('/repos/:reposlug', repos.getRepo);
+
+
+  /************************************/
+  app.post('/repos/file', repos.uploadFile);
+  app.get('/repos/file/:filepath', repos.getFile);
+  app.delete('/repos/file', repos.deleteFile);
+
+
+  /************************************/
+  app.post('/repos/folder', repos.createFolder);
 };
