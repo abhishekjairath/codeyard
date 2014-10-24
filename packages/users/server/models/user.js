@@ -39,6 +39,13 @@ var UserSchema = new Schema({
     type: String,
     required: true
   },
+  repos : [{
+    repo : {
+      type:Schema.ObjectId,
+      ref:'Repo'
+    },
+    isowner: Boolean
+  }],
   email: {
     type: String,
     required: true,

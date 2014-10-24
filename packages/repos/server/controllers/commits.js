@@ -6,6 +6,7 @@
 var mongoose = require('mongoose'),
   User = mongoose.model('User'),
   Repo = mongoose.model('Repo'),
+  Commit = mongoose.model('Commit'),
   async = require('async'),
   config = require('meanio').loadConfig(),
   crypto = require('crypto'),
@@ -43,8 +44,8 @@ var createSlug = function(type,repoName,callback){
 };
 
 
-exports.createRepo = function(req,res){
-	var repo = new Repo();
+exports.createCommit = function(req,res){
+	var repo = new Commit();
 	var result = {};
 	repo.name = req.body.reponame;
 	repo.owner = req.user._id;
@@ -67,27 +68,15 @@ exports.createRepo = function(req,res){
 							'error':1,
 							'error_msg':'There was an error while saving repo'
 						};
-						res.jsonp(result);
 					}
 					else
 					{
-						User.findOneAndUpdate({_id:req.user._id},{$addToSet:{repos:{repo:response._id,isowner:true}}},function(err1,response1){
-							if(err1){
-								console.log(err1);
-								result = {
-								'error':1,
-								'error_msg':'There was an error while saving repo'
-								};
-							}
-							else{
-								result = {
-									'error':0,
-									'error_msg': 'Repo made successfully'
-								};
-							}
-							res.jsonp(result);
-						});
+						result = {
+							'error':0,
+							'error_msg': 'Repo made succcessfully'
+						};
 					}
+					res.jsonp(result);
 				});
 			}
 		});
@@ -114,28 +103,6 @@ exports.getRepo = function(req,res){
 				'error':0,
 				'error_msg':null,
 				'repo':response
-			};
-		}
-		res.jsonp(result);
-	});
-};
-
-exports.viewAll = function(req,res){
-	var username = req.params.username,
-		result = {};
-	User.find({username:username},{hashed_password:false,salt:false}).populate('repos.repo','slug _id desc ispublic updated').exec(function(err,response){
-		if(err){
-			console.log(err);
-			result = {
-				'error':1,
-				'error_msg':'Error while looking for repos'
-			};
-		}
-		else{
-			result = {
-				'error':0,
-				'error_msg':'Repos found.',
-				response:response
 			};
 		}
 		res.jsonp(result);
@@ -346,49 +313,5 @@ exports.getFile = function(req,res){
 			};
 		}
 		res.jsonp(result);
-	});
-};
-
-exports.uploadRepo = function(req,res){
-	console.log(req.body);
-	console.log('*********************************');
-	console.log(req.files.folder);
-	//var r = fs.createReadStream('');
-	//var w = fs.createWriteStream('file.txt.gz');
-	//r.pipe(w);
-};
-
-exports.addCollab = function(req,res){
-	var repoid = req.params.repoid,
-		uid = req.body.uid,
-		result = {};
-
-	User.findOneAndUpdate({_id:uid},{$addToSet:{repos:{repo:repoid,isowner:false}}},function(err1,response1){
-		if(err1){
-			console.log(err1)
-			result = {
-				'error':1,
-				'error_msg':'There was an error while adding collaborator'
-			};
-			res.jsonp(result);
-		}
-		else{
-			Repo.findOneAndUpdate({_id:repoid},{$addToSet:{contributors:uid}},function(err2,response2){
-				if(err2){
-					console.log(err2)
-					result = {
-						'error':1,
-						'error_msg':'There was an error while adding collaborator'
-					};
-				}
-				else{
-					result = {
-						'error':0,
-						'error_msg':'collaborator successfully added'
-					};
-				}
-				res.jsonp(result);
-			});
-		}
 	});
 };

@@ -230,3 +230,28 @@ exports.forgotpassword = function(req, res, next) {
     }
   );
 };
+
+/***************************************/
+/* Custom User Controller */
+/***************************************/
+
+exports.userSuggestions = function(req,res){
+  var result = {};
+  User.find({},'_id name username',function(err,users){
+    if(err){
+      console.log(err)
+      result ={
+        'error': 1,
+        'error_msg':'Unable to search users',
+      };
+    }
+    else{
+      result = {
+        'error':0,
+        'error_msg':'',
+        response:users
+      };
+    }
+    res.jsonp(result);
+  });
+};

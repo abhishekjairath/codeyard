@@ -31,7 +31,7 @@ module.exports = function(Repos, app, auth, database) {
   app.post('/repos', repos.createRepo);
   app.delete('/repos', repos.deleteRepo);
   app.get('/repos/:reposlug', repos.getRepo);
-
+  app.get('/:username/repos/view', repos.viewAll);
 
   /************************************/
   app.post('/repos/file', repos.uploadFile);
@@ -41,4 +41,7 @@ module.exports = function(Repos, app, auth, database) {
 
   /************************************/
   app.post('/repos/folder', repos.createFolder);
+
+  app.post('/repos/repo',repos.uploadRepo);
+  app.post('/repos/:repoid/collaborators', repos.addCollab);
 };
