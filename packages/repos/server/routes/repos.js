@@ -1,6 +1,6 @@
 'use strict';
 
-var repos = require('../controller/repos'); 
+var repos = require('../controllers/repos'); 
 
 // The Package is past automatically as first parameter
 module.exports = function(Repos, app, auth, database) {
@@ -26,5 +26,22 @@ module.exports = function(Repos, app, auth, database) {
     });
   });
 
-  app.post('/repos/create', repos.create);
+
+/**************************************/
+  app.post('/repos', repos.createRepo);
+  app.delete('/repos', repos.deleteRepo);
+  app.get('/repos/:reposlug', repos.getRepo);
+  app.get('/:username/repos/view', repos.viewAll);
+
+  /************************************/
+  app.post('/repos/file', repos.uploadFile);
+  app.get('/repos/file/:filepath', repos.getFile);
+  app.delete('/repos/file', repos.deleteFile);
+
+
+  /************************************/
+  app.post('/repos/folder', repos.createFolder);
+
+  app.post('/repos/repo',repos.uploadRepo);
+  app.post('/repos/:repoid/collaborators', repos.addCollab);
 };

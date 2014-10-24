@@ -28,10 +28,6 @@ var CommitSchema = new Schema({
     type: Date,
     default: Date.now
   },
-  updated:{
-    type: Date,
-    default: Date.now
-  },
   contributor:{
     name:String,
     user:{
@@ -44,7 +40,7 @@ var CommitSchema = new Schema({
     type: Schema.ObjectId,
     ref: 'Repo'
   },
-  changes: [{ChangesSchema}]
+  changes: [ChangesSchema]
 });
 
 /**
