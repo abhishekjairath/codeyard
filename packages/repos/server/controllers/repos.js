@@ -146,7 +146,7 @@ exports.viewAll = function(req,res){
 exports.deleteRepo = function(req,res){
 	var owner = req.user._id,
 		result = {},
-		repoSlug = req.body.repoSlug;
+		repoSlug = req.params.reposlug;
 		Repo.findOne({slug:repoSlug},function(err,response){
 			if(err){
 				console.log(err)
@@ -189,7 +189,7 @@ exports.deleteRepo = function(req,res){
 			else{
 				result = {
 					'error': 1,
-					'error_msg': 'User is not the owner of the repo.'
+					'error_msg': 'You are not the owner of the repo.'
 				};
 				res.jsonp(result);
 			}
@@ -222,7 +222,7 @@ exports.createFolder = function(req,res){
 						res.jsonp(result);
 					}
 					else{
-						Repo.findOneAndUpdate({slug:repoSlug},{$push:{files:{path:pathInRepo+folderSlug,name:folderName,tag:'folder'}}},function(error,response1){
+						Repo.findOneAndUpdate({slug:repoSlug},{$push:{files:{path:pathInRepo+folderSlug,name:folderName,tag:'folder',slug:folderSlug}}},function(error,response1){
 							if(error){
 								console.log(error);
 								result = {
@@ -233,7 +233,8 @@ exports.createFolder = function(req,res){
 							else{
 								result = {
 									'error':0,
-									'error_msg':'Folder created successfully'
+									'error_msg':'Folder created successfully',
+									'response':folderSlug
 								};
 							}
 							res.jsonp(result);

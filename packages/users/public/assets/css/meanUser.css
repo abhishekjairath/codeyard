@@ -1,3 +1,102 @@
 .meanUser-example h1 {
     background-color: purple
 }
+.navbar-brand{font-size: 30px;font-family: AR DARLING, Arial Black;}
+.navbar-nav{background-color: none;}
+.navbar-nav > li:hover{background-color: rgb(225,51,26);transition:background-color 0.5s ease;}
+.navbar-brand span{font-size: 25px;margin-right: 5px;}
+.search{margin-top: 10px;}
+.search span{font-size: 30px;color: #999;padding-right: 20px;}
+.search span:hover{cursor: pointer;color:rgb(225,51,26);transition:color 0.5s ease;}
+.search:hover{background-color: #222 !important;}
+.title{
+    background-image:url(/users/assets/img/back.jpg);
+    height: 430px;
+}
+
+.title h1{
+	font-size: 130px;
+	color: rgb(36,36,36);
+	text-align: left;
+	margin-top: 10px;
+	letter-spacing: 0.2em;
+	font-family: AR DARLING, Arial Black;
+}
+.title h2{
+	margin-top: 30px;
+	font-size: 45px;
+	color: rgb(36,36,36);
+	text-align: left;
+}
+.title img{
+    float: right;	
+}
+.bottom-banner{
+    height:70px;
+    background-color: rgb(225,51,26);
+    box-shadow: 0 0 10px black;
+}
+.bottom-banner-text{
+    color:white;
+    text-align: center;
+    line-height: 70px;
+    font-size: 18px;
+}
+.bottom-banner-text span{margin-right: 10px;margin-left: 10px;}
+.banner-top-border-seperator {
+    width: 0px;
+    border-right: 1px solid #36BBD3;
+    margin: 10px 20px;
+}
+.description{padding-top: 50px;padding-bottom: 50px;}
+.definition{width:60%;margin:auto;text-align: center;}
+.circle{
+	margin-top: 70px;
+	float: left;
+	border: none;
+	font-size: 25px;
+	text-align: center;
+}
+.circle span{font-size: 60px;}
+.circle:hover{color: rgb(225,51,26);transition:color 0.5s ease;}
+.footer{
+	background-color: rgb(225,51,26);
+	box-shadow:  0 0 10px black;
+	height: 100px;
+	overflow: hidden;
+}
+.footer-img{
+	position: relative;
+	top: -20px;
+}
+.footer .team{
+	list-style-type: none;
+	font-size: 12px;
+	color: white;
+	padding-top: 20px;
+}
+.footer .team li{padding-left: 100px;}
+.footer-logo{font-size: 20px;padding-top: 20px;letter-spacing: 0.2em;}
+
+.welcome div{margin-right: 15px;margin-left:15px;font-size: 20px;color:rgb(100,100,100);}
+.welcome div:hover{color:rgb(225,51,26);cursor: pointer;}
+.user-data img{width:100%;height:230px;border-radius: 6px;margin-top: 26px;}
+.division{border-bottom: 2px solid #eee;margin-top: 10px;margin-bottom: 10px;}
+.user-img{
+	background-color: #eee;
+	border-radius: 6px;
+	text-align: center;
+	vertical-align: middle;
+	width:100%;height:230px;margin-top: 26px;
+	padding: 25px;
+}
+.user-img span{
+	font-size: 200px;
+	color: rgb(100,100,100);
+}
+.blue{color:#4183c4;}
+.green{color:#1e6823;}
+.pink{color:rgb(255,46,255);}
+.gray{color:#eeeeee;}
+#calendar span{border:1px solid #eeeeee;margin: 1px;padding: 0;}
+#calendar span:hover{border:1px solid black;}

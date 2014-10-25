@@ -1,27 +1,86 @@
-<div class="" data-ng-controller="ReposController">
-  <h1>Example view from your new awesome package</h1>
-  <h2>Package: {{package.name}}</h2>
-  <ol>
-    <li>
-      <a href="repos/example/anyone">Server route that anyone can access</a>
-    </li>
-    <li>
-      <a href="repos/example/auth">Server route that requires authentication</a>
-    </li>
-    <li>
-      <a href="repos/example/admin">Server route that requires admin user</a>
-    </li>
-    <li>
-      <a href="repos/example/render">Raw Html rendering example from using swig</a>
-    </li>
-  </ol>
-  <h3><img src="/repos/assets/img/logo.png" /></h3>
-  </br>
-  <p class="alert alert-info">You can find your package in /packages/repos</p>
-  </br>
-  <p class="alert alert-warning">MEAN versions prior to 0.3.2 will be in /node_modules/repos</p>
-  </br>
-  <h3><a href="http://www.mean.io/#!/docs">Documentation</a></h3>
-  </br>
+<section data-ng-controller="ReposController">
+  <div class="container">
+  <div class="col-md-3 user-data">
+        <div class="user-img"><span class="glyphicon glyphicon-user"></span>
+          <!--img src="/theme/assets/img/me.jpg"/-->
+        </div>
+        <h2>{{global.user.name}}</h2>
+        <div class="division"></div>
+        <h5><span class="glyphicon glyphicon-user"></span> {{global.user.username}}</h5>
+        <h5><span class="glyphicon glyphicon-envelope"></span> shubhanksrivastava94@gmail.com</h5>
+        <h5><span class="glyphicon glyphicon-time"></span> Joined On Dec 9, 2013</h5>
+        <div class="division"></div>
+        Total Repos:<h3>{{repoCount}}</h3>
+        Total Commits:<h3>0</h3>
+        <div class="division"></div>
+  </div>
+  <br>
+    <div class="col-md-9">
+      <ul class="nav nav-tabs" role="tablist">
+          <li class="{{create_tab}}" data-ng-click="menu('create');">
+            <a ui-sref="repos.create">Create Repository</a>
+          </li>
+          <li class="{{my_tab}}" data-ng-click="menu('myrepos');">
+            <a ui-sref="repos">My Repositories</a>
+          </li>
+          <li class="{{commit_tab}}" data-ng-click="menu('mycommits');">
+            <a ui-sref="repos.commits">Past Commits</a>
+          </li>
+      </ul>
+      <br>
+      <div ui-view>
+        <div data-ng-init="menu('myrepos');">
+          <div class="filters" data-ng-init="filter('all');">
+            <div class="pull-right {{fill1}}" data-ng-click="filter('public');">
+              <span class="glyphicon glyphicon-book"></span>Public
+            </div>
+            <div class="pull-right {{fill2}}" data-ng-click="filter('private');">
+              <span class="glyphicon glyphicon-lock"></span>Private
+            </div>
+            <div class="pull-right {{fill3}}" data-ng-click="filter('all');">
+              <span class="glyphicon glyphicon-stats"></span>All
+            </div>
+          </div>
+          <div class="col-md-6 input-group">
+            <input type="text" class="form-control" placeholder="Search..." ng-model="query">
+            <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+          </div>
+          <div class="division"></div>
+              <div class="col-md-12">
+                <div class="list-group" data-ng-init="viewRepos(global.user.username);">
+                    <a ui-sref="reponame({name:item.repo.slug})" class="list-group-item" data-ng-repeat="item in repos | orderBy:repo.updated | filter:visibility | filter:query:false">
+                      <br>
+                      <span class="badge" title="Public" data-ng-show="item.repo.ispublic">
+                        <span class="glyphicon glyphicon-book"></span>
+                      </span>
+                      <span class="badge" title="Private" data-ng-show="!item.repo.ispublic">
+                        <span class="glyphicon glyphicon-lock"></span>
+                      </span>
+                      <span class="badge" data-ng-show="item.isowner">Owner</span>
+                      <span class="badge" data-ng-show="!item.isowner">Collaborator</span>
+                      <h2 class="list-group-item-heading">
+                        {{item.repo.slug}}
+                      </h2><br>
+                      <p class="list-group-item-text">{{item.repo.desc}}</p><br>
+                      Last Updated On <strong>{{item.repo.updated| date:'MMM d, y h:mm a'}}</strong><br><br>
+                    </a>
+                </div>
+              </div>
+          </div>
+      </div>
+    </div>      
+</section>
+<br><br><br>
+<div class="footer">
+  <img class="col-md-4 footer-img" src="/theme/assets/img/woman_ninja_forg_pass.png"/>
+  <div class="col-md-8 team">
+    <div class="pull-right">
+      <span class="glyphicon glyphicon-copyright-mark"></span>Copyright 2014<br>
+      <div class="footer-logo">C<span class="glyphicon glyphicon-eye-open"></span>DEYARD</div>
+    </div>
+      Our Developer Team:
+      <li>Aman Srivastava</li>
+      <li>Abhishek Jairath</li>
+      <li>Shubhank Srivastava</li>
+    </div>
 </div>
-

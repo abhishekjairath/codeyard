@@ -1,0 +1,25 @@
+<section>
+<div class="panel panel-default" data-ng-init="menu('create');">
+          <div class="panel-heading">Add A New Repository</div>
+          <div class="panel-body" data-ng-controller="ReposController">
+            <div class="input-group">
+              <span class="input-group-addon">Repository Name:</span>
+              <input type="text" class="form-control" data-ng-model="repo.reponame" ng-focus="result='';resultClass='';">
+            </div><br>
+            <div class="input-group">
+              <span class="input-group-addon">Description:</span>
+              <input type="text" class="form-control" data-ng-model="repo.desc">
+            </div><br>
+            <div class="list-group">
+              <div class="list-group-item link {{public}}" data-ng-click="public='green';private='none';repo.ispublic=true;">
+                <h3><span class="glyphicon glyphicon-book"></span> Public</h3><br>Anyone can see this repository. You choose who can commit.
+              </div></a>
+              <div class="list-group-item link {{private}}" data-ng-click="public='none';private='green';repo.ispublic=false">
+                <h3><span class="glyphicon glyphicon-lock"></span> Private</h3><br>You choose who can see and commit to this repository.
+              </div>
+            </div>
+            <span class="pull-right {{resultClass}}"><strong>{{result}}</strong></span>
+            <button class="btn btn-success" data-ng-click="createRepo(repo);">Create Repository</button>
+          </div>
+</div>
+</section>

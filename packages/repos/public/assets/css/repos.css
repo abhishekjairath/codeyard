@@ -1,3 +1,46 @@
-.repos-example h1 {
-  background-color: purple
+.link:hover{cursor: pointer;}
+.filters{
+	font-size: 18px;
+	letter-spacing: 0.1em;
+	color:rgb(100,100,100);
+}
+.filters div{font-family: calibri;margin-right: 10px;margin-top: 10px;margin-left: 10px;}
+.filters div:hover{color: rgb(225,51,26);cursor: pointer;}
+.filters .active{color:rgb(225,51,26);}
+
+.editDesc{margin-top: 20px;}
+.editDesc span{font-size: 25px;margin-top: 5px;}
+.upload-btn{
+	font-size: 30px;
+	border: 1px solid #eeeeee;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	cursor: pointer;
+	font-family: Calibri;
+	letter-spacing: 0.2em;
+	text-align: center;
+}
+.upload-btn:hover{
+    background-color: #333;
+    color:#eeeeee;
+    transition:background-color,color 0.3s ease;
+}
+
+.repomenu .nav-tabs.nav-justified > .active > a{
+    background-color: #333;
+    color:white;
+    cursor: default;
+}
+.repomenu .nav-tabs.nav-justified > li > a{
+	cursor: pointer;
+}
+.stats{text-align: center;padding-top: 10px;padding-bottom: 10px;}
+.stats span{
+	margin-top: 5px;
+	margin-right: 3px;
+	margin-left: 3px;
+	margin-bottom: 5px;
+}
+.stats .badge{
+	background-color: #333;
 }

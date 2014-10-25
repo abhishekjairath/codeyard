@@ -1,0 +1,119 @@
+<br>
+<section data-ng-controller="RepoViewController">
+    <div class="container" data-ng-init="getRepo();">
+        <div class="col-md-9">
+    	    <div>
+    	        <h2><span class="glyphicon glyphicon-book" title="Public" data-ng-show="repo.ispublic"></span>
+                    <span class="glyphicon glyphicon-lock" title="Private" data-ng-show="!repo.ispublic"></span> 
+    	        	{{global.user.username}} / {{repo.slug}}
+    	        	<span class="glyphicon glyphicon-trash pull-right link" title="Delete this repo" ng-click="delRepo=true;"></span>
+                    <div data-ng-show="delRepo;" class="alert alert-danger editDesc">
+                        <strong>Are you sure you want to delete this repository ?</strong>
+                        <span class="glyphicon glyphicon-ok-circle link" data-ng-click="deleteRepo(repo.slug);"></span>
+                        <span class="glyphicon glyphicon-remove-circle link" data-ng-click="delRepo=false;"></span>
+                    </div>
+    	        </h2> 
+            </div>
+            <div class="division"></div>
+            <div>
+            	<span class="glyphicon glyphicon-edit pull-right link" title="Edit Description" data-ng-click="editDesc=true;">-Edit</span>
+            	<h5>{{repo.desc}}
+            		<div data-ng-show="editDesc;" class="alert alert-info editDesc">
+            		    <input type="text" class="form-control" data-ng-model="repo.desc"/>
+            		    <span class="glyphicon glyphicon-ok-circle link" data-ng-click="editDesc=false;"></span>
+        	            <span class="glyphicon glyphicon-remove-circle link" data-ng-click="editDesc=false;"></span>
+            	    </div>
+            	</h5>
+            </div><br>
+            <div class="repomenu">
+                <ul class="nav nav-tabs nav-justified" role="tablist" data-ng-init="nav1='active';">
+                    <li class="{{nav1}}" data-ng-click="nav1='active';nav2='';nav3='';nav4='';">
+                        <a ui-sref="reponame">Structure</a></li>
+                    <li class="{{nav2}}" data-ng-click="nav1='';nav3='';nav4='';nav2='active';">
+                        <a ui-sref="reponame.commits">Commits</a></li>
+                    <li class="{{nav3}}" data-ng-click="nav3='active';nav2='';nav1='';nav4='';">
+                        <a ui-sref="reponame.readme">Read Me</a></li>
+                    <li class="{{nav4}}" data-ng-click="nav4='active';nav2='';nav3='';nav1='';">
+                        <a ui-sref="reponame.wiki">Wiki</a></li>
+                </ul>
+            </div>
+            <br>
+            <div ui-view>
+                <div class="panel panel-default">
+                    <ol class="breadcrumb">
+                        <li data-ng-repeat="slug in currentPath">
+                            <a href="#" ng-click="pathFromCrumb(slug);">{{slug}}</a>
+                        </li>
+                        <li>
+                            <span class="glyphicon glyphicon-plus link" title="New Folder" data-ng-click="newFolder=true;"></span>
+                            <span ng-show="newFolder">
+                            <input type="text" placeholder="New Folder" data-ng-model="newname"/>
+                            <span class="glyphicon glyphicon-ok-circle link" data-ng-click="createFolder(newname);newFolder=false;"></span>
+                            <span class="glyphicon glyphicon-remove-circle link" data-ng-click="newFolder=false;"></span>
+                            </span>
+                        </li>
+                    </ol>
+                    <ul class="list-group">
+                        <li class="list-group-item list-group-item-info" ng-repeat="file in files">
+                            <span class="glyphicon glyphicon-folder-close" ng-show="file.tag=='folder'"></span>
+                            <span class="glyphicon glyphicon-file" ng-show="file.tag!='folder'"></span>
+                            <a href="#" ng-click="pathFromView(file.slug);">{{file.name}}</a>
+                        </li> 
+                        <li class="list-group-item list-group-item-info" ng-if="files.length==0">Folder Empty</li>   
+                    </ul>
+                </div>
+                <form class="dropzone" drop-zone id="file-dropzone"></form>
+            </div>
+        </div>
+        <div class="col-md-3">
+        	<div class="panel panel-default">
+        	<div class="panel-heading">
+        		<strong>Project Collaborators</strong>
+        		<span class="glyphicon glyphicon-plus pull-right link" title="Add" data-ng-click="addteam=true;"></span>
+        	</div>
+        	    <ul class="list-group">
+        	    	<li class="list-group-item" data-ng-show="addteam">
+        	    		<input type="text" class="form-control"/><br>
+        	    		<span class="glyphicon glyphicon-ok-circle link" data-ng-click="addteam=false;"></span>
+        	    		<span class="glyphicon glyphicon-remove-circle link" data-ng-click="addteam=false;"></span>
+        	    	</li>
+                    <li class="list-group-item">Shubhank Srivastava</li>
+                    <li class="list-group-item">Abhishek Jairath</li>
+                    <li class="list-group-item">Aman Srivastava</li>
+                    <li class="list-group-item">Dhruv Khatri</li>
+                    <li class="list-group-item">Shubhanshu Singh</li>
+                </ul>
+            </div>
+            <div class="panel panel-default">
+        	<div class="panel-heading"><strong>Repository Stats</strong>
+                <span class="glyphicon glyphicon-stats pull-right"></span>
+            </div>
+            <div class="stats">
+               <span class="badge">Created On : {{repo.created | date:'mediumDate'}}</span>
+               <span class="badge">Collaborators: {{repo.contributors.length}}</span>
+               <span class="badge">Total Files: {{repo.files.length}}</span>
+               <span class="badge" ng-show="repo.ispublic">Visibility: Public</span> 
+               <span class="badge" ng-show="!repo.ispublic">Visibility: Private</span> 
+               <span class="badge">Last Updated On: {{repo.updated | date:'mediumDate'}}</span>
+           </div>
+            </div>
+            <div class="upload-btn">
+                <span class="glyphicon glyphicon-download"></span>Download
+            </div>
+        </div>
+    </div>
+</section>
+<br><br>
+<div class="footer">
+  <img class="col-md-4 footer-img" src="/theme/assets/img/woman_ninja_forg_pass.png"/>
+  <div class="col-md-8 team">
+    <div class="pull-right">
+      <span class="glyphicon glyphicon-copyright-mark"></span>Copyright 2014<br>
+      <div class="footer-logo">C<span class="glyphicon glyphicon-eye-open"></span>DEYARD</div>
+    </div>
+      Our Developer Team:
+      <li>Aman Srivastava</li>
+      <li>Abhishek Jairath</li>
+      <li>Shubhank Srivastava</li>
+    </div>
+</div>

@@ -18,8 +18,8 @@ Repos.register(function(app, auth, database) {
 
   //We are adding a link to the main menu for all authenticated users
   Repos.menus.add({
-    title: 'repos example page',
-    link: 'repos example page',
+    title: 'Repositories',
+    link: 'repos',
     roles: ['authenticated'],
     menu: 'main'
   });
@@ -45,6 +45,6 @@ Repos.register(function(app, auth, database) {
         //you now have the settings object
     });
     */
-
+  Repos.aggregateAsset('css','repos.css');
   return Repos;
 });
