@@ -1,0 +1,25 @@
+<br>
+<section data-ng-controller="ReposController">
+<div>
+<div class="filters">
+	<div class="pull-right"><span class="glyphicon glyphicon-book"></span>Public</div>
+    <div class="pull-right"><span class="glyphicon glyphicon-lock"></span>Private</div>
+    <div class="pull-right"><span class="glyphicon glyphicon-stats"></span>All</div>
+</div>
+<div class="col-md-6 input-group">
+  <input type="text" class="form-control" placeholder="Search...">
+  <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+</div>
+<div class="division"></div>
+        <div class="col-md-12">
+               <div class="list-group" data-ng-init="viewRepos(global.user.username);">
+                	<a href="#" class="list-group-item">
+                		<span class="badge" title="Public"><span class="glyphicon glyphicon-book"></span></span>
+                        <h4 class="list-group-item-heading">Real-Time-Image-Share</h4>
+                        <p class="list-group-item-text">Real time image sharing app like Snapchat. Built using Node.js, Socket.io and AngularJS.</p><br>
+                        <strong>Last Updated On Wed Oct 22 2014</strong>
+                  </a>
+                </div>
+        </div>
+</div>
+</section>

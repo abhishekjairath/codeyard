@@ -42,7 +42,11 @@ var RepoSchema = new Schema({
   files:[{
     path:String,
     name:String,
-    tag: String
+    tag: String,
+    slug:{
+      type:String,
+      default:null
+    }
   }]
 });
 

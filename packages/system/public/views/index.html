@@ -1,3 +1,135 @@
+<div class="title" data-ng-hide="global.authenticated">
+	<div class="container">
+  	    <h1>CODEYARD</h1>
+  	    <img src="/theme/assets/img/banner-top-ninja.png"/>
+  	    <h2>A Version Control System with Real-Time Collaboration.</h2>
+  	</div>
+</div>
 <section data-ng-controller="IndexController">
-  <h1 mean-token="'home-default'">This is the home view</h1>
+<div class="bottom-banner" data-ng-hide="global.authenticated">
+    <div class="container">
+    	<div class="bottom-banner-text">
+    	    <span class="glyphicon glyphicon-book"></span>Repositories: 1289
+    	    <span class="banner-top-border-seperator"></span>
+    	    <span class="glyphicon glyphicon-user"></span>Users: 13056
+    	</div>
+    </div>
+</div>
+<div class="description" data-ng-hide="global.authenticated">
+    <div class="container">
+      <h1>What is CODEYARD ?</h1>
+        <div class="definition">
+            <h4>CODEYARD is a web-based distributed version control system. It is a tool for powerful collaboration, code review and code management for open source and private projects.</h4>
+        </div>
+        <div class="col-md-6 circle">
+        	    <span class="glyphicon glyphicon-plus"></span>
+        	    <span class="glyphicon glyphicon-book repo"></span><br>
+        	    Create Repositories
+        </div>
+        <div class="col-md-6 circle">
+        	    <span class="glyphicon glyphicon-user"></span>
+        	    <span class="glyphicon glyphicon-user"></span>
+        	    <span class="glyphicon glyphicon-user"></span><br>
+        	    Make Your Team
+        </div>
+        <div class="col-md-6 circle">
+        	    <span class="glyphicon glyphicon-file"></span>
+        	    <span class="glyphicon glyphicon-transfer"></span>
+        	    <span class="glyphicon glyphicon-file"></span><br>
+        	    Commit Changes
+        </div>
+        <div class="col-md-6 circle">
+        	    <span class="glyphicon glyphicon-retweet"></span><br>
+        	    Collaborate Together
+        </div>
+    </div>
+</div>
+<!--AFTER LOGIN VIEW-->
+<div class="container" data-ng-show="global.authenticated">
+	<div class="col-md-3 user-data">
+        <div class="user-img"><span class="glyphicon glyphicon-user"></span>
+        	<!--img src="/theme/assets/img/me.jpg"/-->
+        </div>
+        <h2>{{global.user.name}}</h2>
+        <div class="division"></div>
+        <h5><span class="glyphicon glyphicon-user"></span> {{global.user.username}}</h5>
+        <h5><span class="glyphicon glyphicon-envelope"></span> shubhanksrivastava94@gmail.com</h5>
+        <h5><span class="glyphicon glyphicon-time"></span> Joined On Dec 9, 2013</h5>
+        <div class="division"></div>
+        Total Repos:<h3>0</h3>
+        Total Commits:<h3>0</h3>
+        <div class="division"></div>
+	</div>
+    <div class="col-md-9">
+    	<div class="welcome">
+    	<div class="pull-right" title="Account Settings">
+            	<span class="glyphicon glyphicon-cog"></span>
+        </div>
+        <a ui-sref="repos.create">
+	    <div class="pull-right" title="Create a new Repo">
+            	<span class="glyphicon glyphicon-plus"></span>
+            	<span class="glyphicon glyphicon-book"></span>
+        </div>
+        </a>
+        <h2>Welcome to your Yard !</h2>
+        </div>
+        <div class="division"></div>
+        <div class="panel panel-default">
+        	<div class="panel-heading">Repositories Contributed to</div>
+        	<div class="panel-body">
+                <div class="list-group">
+                	<a href="#" class="list-group-item">
+                		<span class="badge">14</span>
+                        <h4 class="list-group-item-heading">Real-Time-Image-Share</h4>
+                        <p class="list-group-item-text">An image sharing app like snapchat using...</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+        	<div class="panel-heading">Latest Commits</div>
+        	<div class="panel-body">
+                <div class="list-group">
+                	<a href="#" class="list-group-item">
+                        <span class="badge">6 Oct 07:30</span>
+                        <h4 class="list-group-item-heading">Updated picture timer</h4>
+                        <p class="list-group-item-text">
+                        	Commit - <span class="pink">2ba774bee393b732aa0da228ae6437cd4998804d</span>
+                        </p>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+        	<div class="panel-heading">Contribution's Calendar: <strong>{{date_range}}</strong></div>
+        	<div class="panel-body" data-ng-init="contributionCalendar();">
+        		<div class="gray" id="calendar"></div>
+        		    <h5 class="pull-left" style="color: gray;">Summary of commits over the year.</h5>
+        		    <span class="pull-right">
+        		    	<h5 style="color: gray;">Less
+        		    	<span style="color: #eeeeee;" class="glyphicon glyphicon-stop"></span>
+        		    	<span style="color: #d6e685;" class="glyphicon glyphicon-stop"></span>
+        		    	<span style="color: #8cc665;" class="glyphicon glyphicon-stop"></span>
+        		    	<span style="color: #44a340;" class="glyphicon glyphicon-stop"></span>
+        		    	<span style="color: #1e6823;" class="glyphicon glyphicon-stop"></span>
+        		    	More</h5>
+        		    </span>
+        	</div>
+        </div>
+    </div>
+</div>
+<br><br><br>
+<div class="footer">
+	<img class="col-md-4 footer-img" src="/theme/assets/img/woman_ninja_forg_pass.png"/>
+	<div class="col-md-8 team">
+		<div class="pull-right">
+			<span class="glyphicon glyphicon-copyright-mark"></span>Copyright 2014<br>
+			<div class="footer-logo">C<span class="glyphicon glyphicon-eye-open"></span>DEYARD</div>
+		</div>
+	    Our Developer Team:
+	    <li>Aman Srivastava</li>
+	    <li>Abhishek Jairath</li>
+	    <li>Shubhank Srivastava</li>
+    </div>
+</div>
 </section>
