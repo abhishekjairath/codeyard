@@ -237,7 +237,7 @@ exports.createFolder = function(req,res){
 						res.jsonp(result);
 					}
 					else{
-						Repo.findOneAndUpdate({slug:repoSlug},{updated:Date.now,$push:{files:{path:pathInRepo+folderSlug,name:folderName,tag:'folder',slug:folderSlug}}},function(error,response1){
+						Repo.findOneAndUpdate({slug:repoSlug},{updated:Date.now(),$push:{files:{path:pathInRepo+folderSlug,name:folderName,tag:'folder',slug:folderSlug}}},function(error,response1){
 							if(error){
 								console.log(error);
 								result = {
@@ -323,7 +323,7 @@ exports.deleteFile = function(req,res){
 				res.jsonp(result);
 			}
 			else{
-				Repo.findOneAndUpdate({'files.path':filePath},{updated:Date.now,$pull:{files:{path:filePath}}},function(error,response){
+				Repo.findOneAndUpdate({'files.path':filePath},{updated:Date.now(),$pull:{files:{path:filePath}}},function(error,response){
 					if(error){
 						console.log(error);
 						result = {

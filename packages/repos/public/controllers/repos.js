@@ -113,6 +113,8 @@ angular.module('mean.repos').controller('ReposController', ['$scope', 'Global', 
         for (var i = $scope.currentPath.length - 1; i >= 0; i--) {
             if($scope.currentPath[i]!==folder)
                 $scope.currentPath.pop();
+            else
+                break;
         };
         viewPath();
     };
