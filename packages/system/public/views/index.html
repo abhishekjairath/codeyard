@@ -45,19 +45,19 @@
     </div>
 </div>
 <!--AFTER LOGIN VIEW-->
-<div class="container" data-ng-show="global.authenticated">
-	<div class="col-md-3 user-data">
+<div class="container" data-ng-show="global.authenticated" >
+	<div class="col-md-3 user-data" data-ng-init="getUserData();">
         <div class="user-img"><span class="glyphicon glyphicon-user"></span>
         	<!--img src="/theme/assets/img/me.jpg"/-->
         </div>
         <h2>{{global.user.name}}</h2>
         <div class="division"></div>
         <h5><span class="glyphicon glyphicon-user"></span> {{global.user.username}}</h5>
-        <h5><span class="glyphicon glyphicon-envelope"></span> shubhanksrivastava94@gmail.com</h5>
-        <h5><span class="glyphicon glyphicon-time"></span> Joined On Dec 9, 2013</h5>
+        <h5><span class="glyphicon glyphicon-envelope"></span> {{global.user.me.email}}</h5>
+        <h5><span class="glyphicon glyphicon-time"></span> Joined On {{global.user.me.created|date:'mediumDate'}}</h5>
         <div class="division"></div>
-        Total Repos:<h3>0</h3>
-        Total Commits:<h3>0</h3>
+        Total Repos:<h3>{{global.user.me.repos}}</h3>
+        Total Commits:<h3>{{global.user.me.commits}}</h3>
         <div class="division"></div>
 	</div>
     <div class="col-md-9">
