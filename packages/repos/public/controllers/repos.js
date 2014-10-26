@@ -115,7 +115,6 @@ angular.module('mean.repos').controller('ReposController', ['$scope', 'Global', 
         var fileObj = $scope.repo.files;
         $scope.files = [];
         var currentPath = $scope.currentPath.join('/');
-        console.log(currentPath);
         for(var i=0;i<fileObj.length;i++){
             if(fileObj[i].path.substr(0,fileObj[i].path.lastIndexOf('/'))==currentPath){
                 $scope.files.push(fileObj[i]);
@@ -130,24 +129,33 @@ angular.module('mean.repos').controller('ReposController', ['$scope', 'Global', 
         link: function(scope, element, attrs) {
                 
                 element.dropzone({ 
-                    url: "/goggles/add",
+                    url: "/repos/file",
                     maxFilesize: 100,
                     paramName: 'file',
                     addRemoveLinks: true,
                     autoProcessQueue : false,
                     uploadMultiple: true,
                     parallelUploads: 100,
-                    maxFiles: 5,
+                    maxFiles:100,
                     init: function(){
                         var save = angular.element('#upload');
+                        var path = {};
                         var myDropzone=this;
                         save.on("click", function(e) {
                               e.preventDefault();
                               e.stopPropagation();
                               myDropzone.processQueue();
                         });
+                        this.on("addedfile",function(file){
+                            path[file.name] = scope.currentPath.join('/');
+                        });
+                         this.on("removedfile",function(file){
+                            delete path[file.name];
+                        });
+                        this.on("sending", function(file, xhr, formData) {
+                            formData.append("path", path[file.name]);
+                        });
                         this.on('queuecomplete',function(){
-                            angular.element('.green').text(' Uploaded!');
                             this.removeAllFiles();
                         });
                     }

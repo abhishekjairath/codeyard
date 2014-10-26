@@ -28,7 +28,7 @@
             <div class="repomenu">
                 <ul class="nav nav-tabs nav-justified" role="tablist" data-ng-init="nav1='active';">
                     <li class="{{nav1}}" data-ng-click="nav1='active';nav2='';nav3='';nav4='';">
-                        <a ui-sref="reponame">Structure</a></li>
+                        <a ui-sref="reponame">Explore</a></li>
                     <li class="{{nav2}}" data-ng-click="nav1='';nav3='';nav4='';nav2='active';">
                         <a ui-sref="reponame.commits">Commits</a></li>
                     <li class="{{nav3}}" data-ng-click="nav3='active';nav2='';nav1='';nav4='';">
@@ -62,7 +62,10 @@
                         <li class="list-group-item list-group-item-info" ng-if="files.length==0">Folder Empty</li>   
                     </ul>
                 </div>
-                <form class="dropzone" drop-zone id="file-dropzone"></form>
+                <form class="dropzone" drop-zone id="file-dropzone">
+                    <input type="hidden" name="repoSlug" value="{{repo.slug}}"/>
+                    <div class="upload-btn link" id="upload" >Commit</div>
+                </form>
             </div>
         </div>
         <div class="col-md-3">
