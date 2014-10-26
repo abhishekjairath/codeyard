@@ -146,7 +146,8 @@ exports.viewAll = function(req,res){
 exports.deleteRepo = function(req,res){
 	var owner = req.user._id,
 		result = {},
-		repoSlug = req.params.reposlug;
+		repoSlug = req.params.reposlug,
+		repoid='';
 		Repo.findOne({slug:repoSlug},function(err,response){
 			if(err){
 				console.log(err)
@@ -157,6 +158,7 @@ exports.deleteRepo = function(req,res){
 				res.jsonp(result);
 			}
 			else if( response && response.owner.equals(owner)){
+				repoid = response._id;
 				fse.rmrf(repoPath+repoSlug,function(error){
 					if(error){
 						console.log(error);
@@ -174,19 +176,32 @@ exports.deleteRepo = function(req,res){
 									'error' : 1,
 									'error_msg': 'There was an error while deleting repo from DB.'
 								};
+								res.jsonp(result);
 							}
 							else{
-								result = {
-									'error': 0,
-									'error_msg':'Rpeo was successfully deleted.'
-								};
+								User.update({_id:owner},{$pull:{repos:{repo:repoid}}},function(err1,res1){
+									if(err1){
+										console.log(err1);
+										result = {
+											'error' : 1,
+											'error_msg' : 'Error while removing repo from user'
+										};
+									}
+									else{
+										result = {
+											'error':0,
+											'error_msg':'Repo deleted successfully'
+										};
+									}
+									res.jsonp(result);
+								});
 							}
-							res.jsonp(result);
 						});
 					}
 				});
 			}
 			else{
+				console.log(response);
 				result = {
 					'error': 1,
 					'error_msg': 'You are not the owner of the repo.'
@@ -222,7 +237,7 @@ exports.createFolder = function(req,res){
 						res.jsonp(result);
 					}
 					else{
-						Repo.findOneAndUpdate({slug:repoSlug},{$push:{files:{path:pathInRepo+folderSlug,name:folderName,tag:'folder',slug:folderSlug}}},function(error,response1){
+						Repo.findOneAndUpdate({slug:repoSlug},{updated:Date.now,$push:{files:{path:pathInRepo+folderSlug,name:folderName,tag:'folder',slug:folderSlug}}},function(error,response1){
 							if(error){
 								console.log(error);
 								result = {
@@ -272,7 +287,7 @@ exports.uploadFile = function(req,res){
                 	res.jsonp(result);
                 }
                 else {
-                    Repo.findOneAndUpdate({slug:repoSlug},{$push:{files:{path:pathInRepo+fileName, tag:extension, name:fileName}}},function(error,response){
+                    Repo.findOneAndUpdate({slug:repoSlug},{updated:Date.now,$push:{files:{path:pathInRepo+fileName, tag:extension, name:fileName}}},function(error,response){
                     	if(error){
                     		console.log(error);
                     		result = {
@@ -296,6 +311,7 @@ exports.uploadFile = function(req,res){
 
 exports.deleteFile = function(req,res){
 	var fileId = req.body.fileId,
+		filePath= req.body.filePath,
 		result = {};
 		fs.unlink(repoPath+filePath, function(err){
 			if(err){
@@ -307,7 +323,7 @@ exports.deleteFile = function(req,res){
 				res.jsonp(result);
 			}
 			else{
-				Repo.findOneAndUpdate({'files.path':filePath},{$pull:{files:{path:filePath}}},function(error,response){
+				Repo.findOneAndUpdate({'files.path':filePath},{updated:Date.now,$pull:{files:{path:filePath}}},function(error,response){
 					if(error){
 						console.log(error);
 						result = {
