@@ -32,6 +32,7 @@ module.exports = function(Repos, app, auth, database) {
   app.delete('/repos/:reposlug', repos.deleteRepo);
   app.get('/repos/:reposlug', repos.getRepo);
   app.get('/:username/repos/view', repos.viewAll);
+  app.put('/repos/:reposlug', repos.update);
 
   /************************************/
   app.post('/repos/file', repos.uploadFile);

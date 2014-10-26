@@ -1,6 +1,9 @@
 'use strict';
 
-var mean = require('meanio');
+var mean = require('meanio'),
+    mongoose = require('mongoose'),
+    User = mongoose.model('User'),
+    Repo = mongoose.model('Repo');
 
 exports.render = function(req, res) {
 
@@ -29,5 +32,14 @@ exports.render = function(req, res) {
     modules: modules,
     isAdmin: isAdmin,
     adminEnabled: isAdmin() && mean.moduleEnabled('mean-admin')
+  });
+};
+
+exports.getStats = function(req,res){
+  var stats = {};
+  User.count({},function(err,userCount){
+    Repo.count({},function(error,repoCount){
+      res.jsonp(stats = {users:userCount,repos:repoCount});
+    });
   });
 };

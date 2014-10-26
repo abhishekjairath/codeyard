@@ -7,4 +7,6 @@ module.exports = function(System, app, auth, database) {
   app.route('/')
     .get(index.render);
 
+  app.get('/stats',index.getStats);
+
 };
