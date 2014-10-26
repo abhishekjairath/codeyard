@@ -3,6 +3,18 @@
 angular.module('mean.repos').controller('ReposController', ['$scope', 'Global', 'Repos',
   function($scope, Global, Repos) {
     $scope.global = Global;
+    
+    if(!$scope.global.user.me){
+        Repos.getUser().success(function(data){
+            $scope.global.user.me = {};
+            $scope.global.user.me.repos = data.repos.length;
+            $scope.global.user.me.commits = data.commits.length;
+            $scope.global.user.me.created = data.created;
+            $scope.global.user.me.email = data.email; 
+        }).error(function(data){
+            $window.location.href = '/';
+        });
+    }
 
     $scope.menu = function(tab){
         $scope.create_tab = (tab=='create')?'active':'';
@@ -27,7 +39,6 @@ angular.module('mean.repos').controller('ReposController', ['$scope', 'Global', 
     $scope.viewRepos = function(username){
         Repos.viewRepos(username).success(function(data){
             $scope.repos = data.response[0].repos;
-            $scope.repoCount=$scope.repos.length;
         }).error(function(data){
             $scope.error = true;
         });
@@ -102,6 +113,8 @@ angular.module('mean.repos').controller('ReposController', ['$scope', 'Global', 
         for (var i = $scope.currentPath.length - 1; i >= 0; i--) {
             if($scope.currentPath[i]!==folder)
                 $scope.currentPath.pop();
+            else
+                break;
         };
         viewPath();
     };

@@ -3,6 +3,10 @@
 angular.module('mean.repos').factory('Repos', ['$http',
   function($http) {
   	var factory = {};
+    
+    factory.getUser = function(){
+      return $http.get('/users/me');
+    }
 
     factory.createRepo = function(repo){
         return $http.post('/repos',repo);

@@ -14,7 +14,13 @@ var System = new Module('system');
  * Dependency injection is used to define required modules
  */
 System.register(function(app, auth, database) {
-
+  
+  System.menus.add({
+    title: 'Dashboard',
+    link: 'home',
+    roles: ['authenticated'],
+    menu: 'main'
+  });
   //We enable routing. By default the Package Object is passed to the routes
   System.routes(app, auth, database);
 
