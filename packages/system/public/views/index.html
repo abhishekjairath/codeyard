@@ -8,10 +8,10 @@
 <section data-ng-controller="IndexController">
 <div class="bottom-banner" data-ng-hide="global.authenticated">
     <div class="container">
-    	<div class="bottom-banner-text">
-    	    <span class="glyphicon glyphicon-book"></span>Repositories: 1289
+    	<div class="bottom-banner-text" data-ng-init="getStats();">
+    	    <span class="glyphicon glyphicon-book"></span>Repositories: {{repoCount}}
     	    <span class="banner-top-border-seperator"></span>
-    	    <span class="glyphicon glyphicon-user"></span>Users: 13056
+    	    <span class="glyphicon glyphicon-user"></span>Users: {{userCount}}
     	</div>
     </div>
 </div>

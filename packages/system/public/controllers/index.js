@@ -17,6 +17,16 @@ angular.module('mean.system').controller('IndexController', ['$scope','$http', '
         });
     }
 
+    $scope.getStats = function(){
+        $http.get('/stats').success(function(data){
+            $scope.repoCount = data.repos;
+            $scope.userCount = data.users;
+        }).error(function(data){
+            $scope.repoCount = 'X';
+            $scope.userCount = 'X';
+        });
+    }
+
     $scope.contributionCalendar = function(){
         var now = new Date(Date.now());
         var then = new Date((now.getFullYear())-1,now.getMonth(),now.getDate());

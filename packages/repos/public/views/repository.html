@@ -20,7 +20,7 @@
             	<h5>{{repo.desc}}
             		<div data-ng-show="editDesc;" class="alert alert-info editDesc">
             		    <input type="text" class="form-control" data-ng-model="repo.desc"/>
-            		    <span class="glyphicon glyphicon-ok-circle link" data-ng-click="editDesc=false;"></span>
+            		    <span class="glyphicon glyphicon-ok-circle link" data-ng-click="updateRepo(repo.desc);"></span>
         	            <span class="glyphicon glyphicon-remove-circle link" data-ng-click="editDesc=false;"></span>
             	    </div>
             	</h5>

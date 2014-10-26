@@ -19,6 +19,10 @@ angular.module('mean.repos').factory('Repos', ['$http',
     factory.viewRepos = function(username){
     	return $http.get('/'+username+'/repos/view');
     }
+
+    factory.updateRepo = function(desc,reposlug){
+      return $http.put('/repos/'+reposlug,{desc:desc});
+    }
     
     factory.getRepo = function(reposlug){
       return $http.get('/repos/'+reposlug);
