@@ -4,7 +4,7 @@ var repos = require('../controllers/repos');
 
 // The Package is past automatically as first parameter
 module.exports = function(Repos, app, auth, database) {
-
+/*
   app.get('/repos/example/anyone', function(req, res, next) {
     res.send('Anyone can access this');
   });
@@ -25,7 +25,7 @@ module.exports = function(Repos, app, auth, database) {
       res.send(html);
     });
   });
-
+*/
 
 /**************************************/
   app.post('/repos', repos.createRepo);
@@ -33,7 +33,7 @@ module.exports = function(Repos, app, auth, database) {
   app.get('/repos/:reposlug', repos.getRepo);
   app.get('/:username/repos/view', repos.viewAll);
   app.put('/repos/:reposlug', repos.update);
-
+  app.get('/repos/download/:reposlug', repos.downloadRepo);
   /************************************/
   app.post('/repos/file', repos.uploadFile);
   app.get('/repos/file/:filepath', repos.getFile);

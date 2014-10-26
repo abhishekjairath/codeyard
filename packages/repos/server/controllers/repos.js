@@ -15,6 +15,28 @@ var mongoose = require('mongoose'),
   makeslug = require('slug'),
   repoPath = config.repoPath;
 
+exports.downloadRepo = function(req,res){
+    var repoSlug = req.params.reposlug;
+    var targz = require('tar.gz');
+    /*var compress = new targz().compress(repoPath+repoSlug, repoPath+repoSlug+'.tar.gz', function(err){
+            
+        if(err){
+            console.log(err);
+            res.send();
+        }else{*/
+            var filePath = repoPath+'Calling.mp3';
+            var stat = fs.statSync(filePath);
+            console.log(filePath);
+            res.writeHead(200, {
+                'Content-Type': 'audio/mpeg',
+                'Content-Length': stat.size
+            });
+
+            var readStream = fs.createReadStream(filePath);
+            readStream.pipe(res);
+        /*}
+    });*/
+};
 
 var createSlug = function(type,repoName,callback){
 	var max = 9999;

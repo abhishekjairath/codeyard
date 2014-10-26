@@ -8,6 +8,10 @@ angular.module('mean.repos').factory('Repos', ['$http',
       return $http.get('/users/me');
     }
 
+    factory.downloadRepo = function(reposlug){
+      return $http.get('/repos/download/'+reposlug);
+    }
+    
     factory.createRepo = function(repo){
         return $http.post('/repos',repo);
     }

@@ -69,6 +69,19 @@
             </div>
         </div>
         <div class="col-md-3">
+            <div class="panel panel-default">
+            <div class="panel-heading"><strong>Repository Stats</strong>
+                <span class="glyphicon glyphicon-stats pull-right"></span>
+            </div>
+            <div class="stats">
+               <span class="badge">Created On : {{repo.created | date:'mediumDate'}}</span>
+               <span class="badge">Collaborators: {{repo.contributors.length}}</span>
+               <span class="badge">Total Files: {{repo.files.length}}</span>
+               <span class="badge" ng-show="repo.ispublic">Visibility: Public</span> 
+               <span class="badge" ng-show="!repo.ispublic">Visibility: Private</span> 
+               <span class="badge">Last Updated On: {{repo.updated | date:'mediumDate'}}</span>
+           </div>
+            </div>
         	<div class="panel panel-default">
         	<div class="panel-heading">
         		<strong>Project Collaborators</strong>
@@ -87,20 +100,7 @@
                     <li class="list-group-item">Shubhanshu Singh</li>
                 </ul>
             </div>
-            <div class="panel panel-default">
-        	<div class="panel-heading"><strong>Repository Stats</strong>
-                <span class="glyphicon glyphicon-stats pull-right"></span>
-            </div>
-            <div class="stats">
-               <span class="badge">Created On : {{repo.created | date:'mediumDate'}}</span>
-               <span class="badge">Collaborators: {{repo.contributors.length}}</span>
-               <span class="badge">Total Files: {{repo.files.length}}</span>
-               <span class="badge" ng-show="repo.ispublic">Visibility: Public</span> 
-               <span class="badge" ng-show="!repo.ispublic">Visibility: Private</span> 
-               <span class="badge">Last Updated On: {{repo.updated | date:'mediumDate'}}</span>
-           </div>
-            </div>
-            <div class="upload-btn">
+            <div class="upload-btn" data-ng-click="downloadRepo();">
                 <span class="glyphicon glyphicon-download"></span>Download
             </div>
         </div>

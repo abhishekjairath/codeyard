@@ -22,6 +22,14 @@ angular.module('mean.repos').controller('ReposController', ['$scope', 'Global', 
         $scope.commit_tab = (tab=='mycommits')?'active':'';
     };
 
+    $scope.downloadRepo = function(){
+        Repos.downloadRepo($scope.reposlug).success(function(data){
+
+        }).error(function(data){
+            alert('Download Failed');
+        });
+    };
+    
     $scope.createRepo = function(repo){
         $scope.repo=angular.copy(repo);
         Repos.createRepo($scope.repo).success(function(data){
