@@ -39,6 +39,14 @@ var UserSchema = new Schema({
     type: String,
     required: true
   },
+  created:{
+    type: Date,
+    default: Date.now
+  },
+  commits:[{
+    type: Schema.ObjectId,
+    ref: 'User'
+  }],
   repos : [{
     repo : {
       type:Schema.ObjectId,
