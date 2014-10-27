@@ -15,6 +15,28 @@ var mongoose = require('mongoose'),
   makeslug = require('slug'),
   repoPath = config.repoPath;
 
+exports.downloadRepo = function(req,res){
+    var repoSlug = req.params.reposlug;
+    var targz = require('tar.gz');
+    var compress = new targz().compress(repoPath+repoSlug, repoPath+repoSlug+'.tar.gz', function(err){
+            
+        if(err){
+            console.log(err);
+            res.send();
+        }else{
+            var filePath = repoPath+repoSlug+'.tar.gz';
+            var stat = fs.statSync(filePath);
+            console.log(filePath);
+            res.writeHead(200, {
+                'Content-Type': 'application/x-compressed',
+                'Content-Length': stat.size
+            });
+
+            var readStream = fs.createReadStream(filePath);
+            readStream.pipe(res);
+        }
+    });
+};
 
 var createSlug = function(type,repoName,callback){
 	var max = 9999;
@@ -211,6 +233,50 @@ exports.deleteRepo = function(req,res){
 		});
 };
 
+exports.update = function(req,res){
+	var reposlug = req.params.reposlug,
+		desc = req.body.desc,
+		owner = req.user._id,
+		result = {};
+
+	Repo.findOne({slug: reposlug},function(err1,res1){
+		if(err1){
+			console.log(err);
+			result = {
+				'error':1,
+				'error_msg':'Error while looking for repo.'
+			};
+			res.jsonp(result);
+		}
+		else if(res1 && (res1.contributors.indexOf(owner)!==-1)) {
+				Repo.findOneAndUpdate({slug:reposlug},{updated:Date.now(),desc:desc},function(err,response){
+					if(err){
+						console.log(err)
+						result = {
+							'error':1,
+							'error_msg':'Error while looking for repo.'
+						};
+					}
+					else{
+						result = {
+							'error':0,
+							'error_msg':'Repo description updated successfully.',
+							'repo':response
+						};
+					}
+					res.jsonp(result);
+				});
+		}
+		else{
+			result = {
+				'error': 1,
+				'error_msg': 'You are not the owner of the repo.'
+			};
+			res.jsonp(result);
+		}
+	});
+};
+
 
 exports.createFolder = function(req,res){
 	var folderName = req.body.folderName,
@@ -237,7 +303,7 @@ exports.createFolder = function(req,res){
 						res.jsonp(result);
 					}
 					else{
-						Repo.findOneAndUpdate({slug:repoSlug},{updated:Date.now,$push:{files:{path:pathInRepo+folderSlug,name:folderName,tag:'folder',slug:folderSlug}}},function(error,response1){
+						Repo.findOneAndUpdate({slug:repoSlug},{updated:Date.now(),$push:{files:{path:pathInRepo+folderSlug,name:folderName,tag:'folder',slug:folderSlug}}},function(error,response1){
 							if(error){
 								console.log(error);
 								result = {
@@ -261,52 +327,70 @@ exports.createFolder = function(req,res){
 };
 
 exports.uploadFile = function(req,res){
-	var pathInRepo = req.body.path,
+	var paths = [],
+		files = [],
 		repoSlug = req.body.repoSlug,
 		result = {};
-	fs.readFile(req.files.file.path,function(err,data){
-		var extension = req.files.file.extension,
-			fileName = req.files.file.originalname.replace('.'+extension,''),
-			filePath = config.repoPath+pathInRepo+fileName;
-			
-    	if(err){
-    		result = {
-    			'error': 1,
-    			'error_msg': 'Cannot read the file.'
-    		};
-    		res.jsonp(result);
-    	}
-    	else{
-    	    fs.writeFile(filePath,data,function(err,result){
-                if(err){
-                	console.log(err);
-                	result = {
-                		'error':1,
-                		'error_msg':'Error while uploading the file.'
-                	};
-                	res.jsonp(result);
-                }
-                else {
-                    Repo.findOneAndUpdate({slug:repoSlug},{updated:Date.now,$push:{files:{path:pathInRepo+fileName, tag:extension, name:fileName}}},function(error,response){
-                    	if(error){
-                    		console.log(error);
-                    		result = {
-                    			'error':1,
-                    			'error_msg':'There was error while saving the file in DB.'
-                    		};
-                    	}
-                    	else{
-                    		result = {
-                    			'error':0,
-                    			'error_msg':'File uploaded successfully'
-                    		};
-                    	}
-                    	res.jsonp(result);
-                    });
-                }
-    	    });
-        }
+	Object.keys(req.files).forEach(function (key) {
+        files.push(req.files[key]);
+        });
+	processFiles(files,req.body.path,repoSlug, function(err,response){
+		if(err)
+			console.log(err);
+		res.jsonp(response);
 	});
+
+};
+
+var processFiles = function(files,path,repoSlug,cb){
+	var result = {},
+		i = 0,
+		extension = '',
+		fileName = '',
+		filePath = '';
+		console.log(files);
+	async.eachSeries(files,function(item,iterate){
+		fs.readFile(item.path,function(err,data){
+				extension = item.extension;
+			    fileName = item.originalname.replace('.'+extension,'');
+				filePath = config.repoPath+path[i]+'/'+item.originalname;
+			if(err){
+				console.log(err);
+				iterate();
+			}
+			else{
+				fs.writeFile(filePath,data,function(error,result){
+					if(error){
+						console.log(error);
+						iterate();
+					}
+					else {
+						Repo.findOneAndUpdate({slug:repoSlug},{updated:Date.now(),$push:{files:{path:path[i]+'/'+item.originalname, tag:extension, name:fileName}}},function(error1,response1){
+							if(error1){
+								console.log(error1);
+							}
+							i = i+1;				
+							iterate();			
+						});
+					}
+				});
+			}
+		})},function(err){
+			if(err){	
+				result = {
+					'error':0,
+					'error_msg':'Files committed successfully'
+				};
+				cb(err,result);
+			}
+			else{	
+				result = {
+					'error':0,
+					'error_msg':'Files committed successfully'
+				};
+				cb(null,result);
+			}
+		});
 };
 
 exports.deleteFile = function(req,res){
@@ -323,7 +407,7 @@ exports.deleteFile = function(req,res){
 				res.jsonp(result);
 			}
 			else{
-				Repo.findOneAndUpdate({'files.path':filePath},{updated:Date.now,$pull:{files:{path:filePath}}},function(error,response){
+				Repo.findOneAndUpdate({'files.path':filePath},{updated:Date.now(),$pull:{files:{path:filePath}}},function(error,response){
 					if(error){
 						console.log(error);
 						result = {
@@ -390,7 +474,7 @@ exports.addCollab = function(req,res){
 			res.jsonp(result);
 		}
 		else{
-			Repo.findOneAndUpdate({_id:repoid},{$addToSet:{contributors:uid}},function(err2,response2){
+			Repo.findOneAndUpdate({_id:repoid},{updated:Date.now(),$addToSet:{contributors:uid}},function(err2,response2){
 				if(err2){
 					console.log(err2)
 					result = {

@@ -20,7 +20,7 @@
             	<h5>{{repo.desc}}
             		<div data-ng-show="editDesc;" class="alert alert-info editDesc">
             		    <input type="text" class="form-control" data-ng-model="repo.desc"/>
-            		    <span class="glyphicon glyphicon-ok-circle link" data-ng-click="editDesc=false;"></span>
+            		    <span class="glyphicon glyphicon-ok-circle link" data-ng-click="updateRepo(repo.desc);"></span>
         	            <span class="glyphicon glyphicon-remove-circle link" data-ng-click="editDesc=false;"></span>
             	    </div>
             	</h5>
@@ -69,6 +69,19 @@
             </div>
         </div>
         <div class="col-md-3">
+            <div class="panel panel-default">
+            <div class="panel-heading"><strong>Repository Stats</strong>
+                <span class="glyphicon glyphicon-stats pull-right"></span>
+            </div>
+            <div class="stats">
+               <span class="badge">Created On : {{repo.created | date:'mediumDate'}}</span>
+               <span class="badge">Collaborators: {{repo.contributors.length}}</span>
+               <span class="badge">Total Files: {{repo.files.length}}</span>
+               <span class="badge" ng-show="repo.ispublic">Visibility: Public</span> 
+               <span class="badge" ng-show="!repo.ispublic">Visibility: Private</span> 
+               <span class="badge">Last Updated On: {{repo.updated | date:'mediumDate'}}</span>
+           </div>
+            </div>
         	<div class="panel panel-default">
         	<div class="panel-heading">
         		<strong>Project Collaborators</strong>
@@ -87,22 +100,11 @@
                     <li class="list-group-item">Shubhanshu Singh</li>
                 </ul>
             </div>
-            <div class="panel panel-default">
-        	<div class="panel-heading"><strong>Repository Stats</strong>
-                <span class="glyphicon glyphicon-stats pull-right"></span>
-            </div>
-            <div class="stats">
-               <span class="badge">Created On : {{repo.created | date:'mediumDate'}}</span>
-               <span class="badge">Collaborators: {{repo.contributors.length}}</span>
-               <span class="badge">Total Files: {{repo.files.length}}</span>
-               <span class="badge" ng-show="repo.ispublic">Visibility: Public</span> 
-               <span class="badge" ng-show="!repo.ispublic">Visibility: Private</span> 
-               <span class="badge">Last Updated On: {{repo.updated | date:'mediumDate'}}</span>
-           </div>
-            </div>
+            <a href="/repos/download/{{repo.slug}}">
             <div class="upload-btn">
                 <span class="glyphicon glyphicon-download"></span>Download
             </div>
+            </a>
         </div>
     </div>
 </section>

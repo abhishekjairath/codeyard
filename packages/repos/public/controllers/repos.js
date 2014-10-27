@@ -3,13 +3,25 @@
 angular.module('mean.repos').controller('ReposController', ['$scope', 'Global', 'Repos',
   function($scope, Global, Repos) {
     $scope.global = Global;
+    
+    if(!$scope.global.user.me){
+        Repos.getUser().success(function(data){
+            $scope.global.user.me = {};
+            $scope.global.user.me.repos = data.repos.length;
+            $scope.global.user.me.commits = data.commits.length;
+            $scope.global.user.me.created = data.created;
+            $scope.global.user.me.email = data.email; 
+        }).error(function(data){
+            $window.location.href = '/';
+        });
+    }
 
     $scope.menu = function(tab){
         $scope.create_tab = (tab=='create')?'active':'';
         $scope.my_tab = (tab=='myrepos')?'active':'';
         $scope.commit_tab = (tab=='mycommits')?'active':'';
     };
-
+    
     $scope.createRepo = function(repo){
         $scope.repo=angular.copy(repo);
         Repos.createRepo($scope.repo).success(function(data){
@@ -27,12 +39,13 @@ angular.module('mean.repos').controller('ReposController', ['$scope', 'Global', 
     $scope.viewRepos = function(username){
         Repos.viewRepos(username).success(function(data){
             $scope.repos = data.response[0].repos;
-            $scope.repoCount=$scope.repos.length;
         }).error(function(data){
             $scope.error = true;
         });
     };
     
+
+
     $scope.filter = function(filter){
         if(filter=='public'){
             $scope.visible='1';$scope.fill1='active';$scope.fill2='';$scope.fill3='';
@@ -69,6 +82,14 @@ angular.module('mean.repos').controller('ReposController', ['$scope', 'Global', 
             $scope.error.getRepo = data.error_msg;
         });
     };
+    
+    $scope.downloadRepo = function(){
+        Repos.downloadRepo($scope.reposlug).success(function(data){
+
+        }).error(function(data){
+            alert('Download Failed');
+        });
+    };
 
     $scope.deleteRepo = function(reposlug){
         Repos.deleteRepo(reposlug).success(function(data){
@@ -77,6 +98,14 @@ angular.module('mean.repos').controller('ReposController', ['$scope', 'Global', 
             $scope.error.deleteRepo = data.error_msg;
         });
     };
+
+    $scope.updateRepo = function(desc){
+        Repos.updateRepo(desc,$scope.reposlug).success(function(data){
+            $scope.editDesc = false;
+        }).error(function(data){
+            $scope.error.update = data.error_msg;
+        });
+    }; 
     
     $scope.createFolder = function(foldername){
         if(!foldername){
@@ -102,6 +131,8 @@ angular.module('mean.repos').controller('ReposController', ['$scope', 'Global', 
         for (var i = $scope.currentPath.length - 1; i >= 0; i--) {
             if($scope.currentPath[i]!==folder)
                 $scope.currentPath.pop();
+            else
+                break;
         };
         viewPath();
     };
@@ -157,6 +188,7 @@ angular.module('mean.repos').controller('ReposController', ['$scope', 'Global', 
                         });
                         this.on('queuecomplete',function(){
                             this.removeAllFiles();
+                            scope.getRepo();
                         });
                     }
                 });
