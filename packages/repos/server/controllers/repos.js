@@ -34,6 +34,9 @@ exports.downloadRepo = function(req,res){
 
             var readStream = fs.createReadStream(filePath);
             readStream.pipe(res);
+            readStream.on('end', function () {
+                fs.unlink(repoPath+repoSlug+'.tar.gz');
+            });
         }
     });
 };
