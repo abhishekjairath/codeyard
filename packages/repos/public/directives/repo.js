@@ -11,7 +11,7 @@ angular.module('mean.repos').directive('userSuggestions',function(){
 				});
 			};
 		},
-      	template:'<div id="prefetch"><input class="typeahead" type="text" ng-model="uid" placeholder="Countries"><button class="btn btn-primary" ng-click="addCollab(uid)">Add</button></div>',
+      	template:'<div id="prefetch"><input class="typeahead form-control" type="text" ng-model="uid" placeholder="Username"><span ng-click="addCollab(uid)" class="glyphicon glyphicon-ok-circle link"></span></div>',
       	link: function (scope, element) {
       		var countries = new Bloodhound({
       		datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
