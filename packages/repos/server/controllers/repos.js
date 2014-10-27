@@ -18,24 +18,24 @@ var mongoose = require('mongoose'),
 exports.downloadRepo = function(req,res){
     var repoSlug = req.params.reposlug;
     var targz = require('tar.gz');
-    /*var compress = new targz().compress(repoPath+repoSlug, repoPath+repoSlug+'.tar.gz', function(err){
+    var compress = new targz().compress(repoPath+repoSlug, repoPath+repoSlug+'.tar.gz', function(err){
             
         if(err){
             console.log(err);
             res.send();
-        }else{*/
-            var filePath = repoPath+'Calling.mp3';
+        }else{
+            var filePath = repoPath+repoSlug+'.tar.gz';
             var stat = fs.statSync(filePath);
             console.log(filePath);
             res.writeHead(200, {
-                'Content-Type': 'audio/mpeg',
+                'Content-Type': 'application/x-compressed',
                 'Content-Length': stat.size
             });
 
             var readStream = fs.createReadStream(filePath);
             readStream.pipe(res);
-        /*}
-    });*/
+        }
+    });
 };
 
 var createSlug = function(type,repoName,callback){
@@ -334,7 +334,6 @@ exports.uploadFile = function(req,res){
 	Object.keys(req.files).forEach(function (key) {
         files.push(req.files[key]);
         });
-	console.log(req.body.path);
 	processFiles(files,req.body.path,repoSlug, function(err,response){
 		if(err)
 			console.log(err);
@@ -349,55 +348,49 @@ var processFiles = function(files,path,repoSlug,cb){
 		extension = '',
 		fileName = '',
 		filePath = '';
-	files.forEach(function(file){
-		console.log(path[i]);
-		console.log(i);
-		fs.readFile(file.path,function(err,data){
-				extension = file.extension;
-			    fileName = file.originalname.replace('.'+extension,'');
-				filePath = config.repoPath+path[i]+'/'+file.originalname;
-			
+		console.log(files);
+	async.eachSeries(files,function(item,iterate){
+		fs.readFile(item.path,function(err,data){
+				extension = item.extension;
+			    fileName = item.originalname.replace('.'+extension,'');
+				filePath = config.repoPath+path[i]+'/'+item.originalname;
 			if(err){
-				result = {
-					'error': 1,
-					'error_msg': 'Cannot read the file.'
-				};
 				console.log(err);
-				//cb(err,result);
+				iterate();
 			}
 			else{
 				fs.writeFile(filePath,data,function(error,result){
 					if(error){
-						result = {
-							'error':1,
-							'error_msg':'Error while uploading the file.'
-						};
 						console.log(error);
-						//cb(error,result);
+						iterate();
 					}
 					else {
-						Repo.findOneAndUpdate({slug:repoSlug},{updated:Date.now(),$push:{files:{path:path[i]+'/'+file.originalname, tag:extension, name:fileName}}},function(error1,response1){
+						Repo.findOneAndUpdate({slug:repoSlug},{updated:Date.now(),$push:{files:{path:path[i]+'/'+item.originalname, tag:extension, name:fileName}}},function(error1,response1){
 							if(error1){
-								result = {
-									'error':1,
-									'error_msg':'There was error while saving the file in DB.'
-								};
 								console.log(error1);
-								//cb(error1,result);
-							}				
-							else
-							 i=i+1;			
+							}
+							i = i+1;				
+							iterate();			
 						});
 					}
 				});
 			}
+		})},function(err){
+			if(err){	
+				result = {
+					'error':0,
+					'error_msg':'Files committed successfully'
+				};
+				cb(err,result);
+			}
+			else{	
+				result = {
+					'error':0,
+					'error_msg':'Files committed successfully'
+				};
+				cb(null,result);
+			}
 		});
-	});
-	result = {
-				'error':0,
-				'error_msg':'Files committed successfully'
-			};
-	cb(null,result);
 };
 
 exports.deleteFile = function(req,res){

@@ -188,6 +188,7 @@ angular.module('mean.repos').controller('ReposController', ['$scope', 'Global', 
                         });
                         this.on('queuecomplete',function(){
                             this.removeAllFiles();
+                            scope.getRepo();
                         });
                     }
                 });
