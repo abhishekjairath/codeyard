@@ -89,15 +89,9 @@
         	</div>
         	    <ul class="list-group">
         	    	<li class="list-group-item" data-ng-show="addteam">
-        	    		<input type="text" class="form-control"/><br>
-        	    		<span class="glyphicon glyphicon-ok-circle link" data-ng-click="addteam=false;"></span>
-        	    		<span class="glyphicon glyphicon-remove-circle link" data-ng-click="addteam=false;"></span>
+        	    		<user-suggestions repo-id="repo._id"></user-suggestions>
         	    	</li>
-                    <li class="list-group-item">Shubhank Srivastava</li>
-                    <li class="list-group-item">Abhishek Jairath</li>
-                    <li class="list-group-item">Aman Srivastava</li>
-                    <li class="list-group-item">Dhruv Khatri</li>
-                    <li class="list-group-item">Shubhanshu Singh</li>
+                    <li class="list-group-item" ng-repeat="contributor in repo.contributors">{{contributor.name}}</li>
                 </ul>
             </div>
             <a href="/repos/download/{{repo.slug}}">

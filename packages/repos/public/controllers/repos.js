@@ -158,7 +158,6 @@ angular.module('mean.repos').controller('ReposController', ['$scope', 'Global', 
     return{ 
         transclude: false,    
         link: function(scope, element, attrs) {
-                
                 element.dropzone({ 
                     url: "/repos/file",
                     maxFilesize: 100,
@@ -195,4 +194,47 @@ angular.module('mean.repos').controller('ReposController', ['$scope', 'Global', 
                 
             }
     }  
+})
+.directive('userSuggestions',function($http,$compile){
+    return {
+        restrict: 'E',
+        transclude: true,
+        scope: {
+            repoid: "=repoId",
+        },
+        template:'<div id="prefetch"><input class="typeahead form-control" type="text" ng-model="username" placeholder="Username"><span ng-click="addCollab(username)" class="glyphicon glyphicon-ok-circle link"></span></div>',
+        link: function (scope, element) {
+            scope.addCollab = function(username){
+                $http.post('repos/'+scope.repoid+'/collaborators',{username:username}).success(function(data){
+                scope.username = '';    
+                console.log(scope.$parent.repo.contributors);
+                console.log(data.collaborators);
+                scope.$parent.repo.contributors = [];
+                scope.$parent.repo.contributors = data.collaborators;
+                });
+            };
+            var countries = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            limit: 10,
+            prefetch: {
+                url: 'users/suggestions',
+                filter: function(list) {
+                    return $.map(list.response, function(item) { return { name: item.username }; });
+                }
+            }
+        });
+
+        countries.initialize();
+
+        angular.element('#prefetch .typeahead').typeahead(null, {
+            name: 'collaborator',
+            displayKey: 'name',
+            source: countries.ttAdapter(),
+            template:{
+                suggestion: $compile('<p><strong>{{name}}</strong> – {{username}}</p>')
+            }
+        });
+      }
+  };
 });

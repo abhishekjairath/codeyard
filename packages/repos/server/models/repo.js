@@ -43,6 +43,7 @@ var RepoSchema = new Schema({
     path:String,
     name:String,
     tag: String,
+    size: Number,
     slug:{
       type:String,
       default:null

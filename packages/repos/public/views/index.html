@@ -48,21 +48,21 @@
           <div class="division"></div>
               <div class="col-md-12">
                 <div class="list-group" data-ng-init="viewRepos(global.user.username);">
-                    <a ui-sref="reponame({name:item.repo.slug})" class="list-group-item" data-ng-repeat="item in repos | orderBy:repo.updated | filter:visibility | filter:query:false">
+                    <a ui-sref="reponame({name:item.slug})" class="list-group-item" data-ng-repeat="item in repos | orderBy:repo.updated | filter:visibility | filter:query:false">
                       <br>
-                      <span class="badge" title="Public" data-ng-show="item.repo.ispublic">
+                      <span class="badge" title="Public" data-ng-show="item.ispublic">
                         <span class="glyphicon glyphicon-book"></span>
                       </span>
-                      <span class="badge" title="Private" data-ng-show="!item.repo.ispublic">
+                      <span class="badge" title="Private" data-ng-show="!item.ispublic">
                         <span class="glyphicon glyphicon-lock"></span>
                       </span>
-                      <span class="badge" data-ng-show="item.isowner">Owner</span>
-                      <span class="badge" data-ng-show="!item.isowner">Collaborator</span>
+                      <span class="badge" data-ng-show="item.owner === global.user._id">Owner</span>
+                      <span class="badge" data-ng-show="!(item.owner=== global.user._id)">Collaborator</span>
                       <h2 class="list-group-item-heading">
-                        {{item.repo.slug}}
+                        {{item.slug}}
                       </h2><br>
-                      <p class="list-group-item-text">{{item.repo.desc}}</p><br>
-                      Last Updated On <strong>{{item.repo.updated| date:'MMM d, y h:mm a'}}</strong><br><br>
+                      <p class="list-group-item-text">{{item.desc}}</p><br>
+                      Last Updated On <strong>{{item.updated| date:'MMM d, y h:mm a'}}</strong><br><br>
                     </a>
                 </div>
               </div>
