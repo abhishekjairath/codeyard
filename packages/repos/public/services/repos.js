@@ -35,6 +35,10 @@ angular.module('mean.repos').factory('Repos', ['$http',
     factory.deleteRepo = function(reposlug){
       return $http.delete('/repos/'+reposlug);
     }
+
+    factory.getFile = function(filepath){
+      return $http.get('/repos/file/'+filepath);
+    }
     return factory; 
   }
 ]);
