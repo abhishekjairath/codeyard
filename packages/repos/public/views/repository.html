@@ -75,7 +75,7 @@
                     </div>
                     <div ng-show="list==false;">
                         <div class="file-content">
-                            <h2>{{openedFile}}</h2>
+                            <h2>{{openedFile}} | <span class="file-size">{{fileSize}}</span></h2>
                             <div class="division"></div>
                             <div id="lines" class="col-md-1" style="border-right:1px solid #eeeeee;text-align:right;color:rgb(225,51,26);"></div>
                             <div id="content" class="col-md-11" style="line-height: 20px;"></div>
@@ -96,7 +96,7 @@
                <span class="badge">Total Files: {{repo.files.length}}</span>
                <span class="badge" ng-show="repo.ispublic">Visibility: Public</span> 
                <span class="badge" ng-show="!repo.ispublic">Visibility: Private</span> 
-               <span class="badge">Last Updated On: {{repo.updated | date:'mediumDate'}}</span>
+               <span class="badge">Last Updated On: {{repo.updated | date:'MMM d, y h:mm a'}}</span>
            </div>
             </div>
         	<div class="panel panel-default">
