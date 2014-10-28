@@ -1,4 +1,3 @@
-<br>
 <section data-ng-controller="RepoViewController">
     <div class="container" data-ng-init="getRepo();">
         <div class="col-md-9">
@@ -42,9 +41,9 @@
                 <div class="panel panel-default">
                     <ol class="breadcrumb">
                         <li data-ng-repeat="slug in currentPath">
-                            <a href="#" ng-click="pathFromCrumb(slug);">{{slug}}</a>
+                            <a href="#" ng-click="pathFromCrumb(slug);list=true;">{{slug}}</a>
                         </li>
-                        <li>
+                        <li ng-show="plusSignFolder==true;">
                             <span class="glyphicon glyphicon-plus link" title="New Folder" data-ng-click="newFolder=true;"></span>
                             <span ng-show="newFolder">
                             <input type="text" placeholder="New Folder" data-ng-model="newname"/>
@@ -53,22 +52,40 @@
                             </span>
                         </li>
                     </ol>
-                    <ul class="list-group">
-                        <li class="list-group-item list-group-item-info" ng-repeat="file in files">
-                            <span class="glyphicon glyphicon-folder-close" ng-show="file.tag=='folder'"></span>
-                            <span class="glyphicon glyphicon-file" ng-show="file.tag!='folder'"></span>
-                            <a href="#" ng-click="pathFromView(file.slug);">{{file.name}}</a>
-                        </li> 
-                        <li class="list-group-item list-group-item-info" ng-if="files.length==0">Folder Empty</li>   
-                    </ul>
+                    <div ng-show="list==true">
+                        <ul class="list-group">
+                            <li class="list-group-item list-group-item-info" ng-repeat="file in files">
+                                <span ng-show="file.tag=='folder'">
+                                    <span class="glyphicon glyphicon-folder-close"></span>
+                                    <a href="" ng-click="pathFromView(file.slug);">{{file.name}}</a>
+                                </span>
+                                <span ng-show="file.tag!='folder'">
+                                    <span class="glyphicon glyphicon-file"></span>
+                                    <a href="" ng-click="viewFile(file);">{{file.name}}.{{file.tag}}</a>
+                                </span>
+                            </li> 
+                            <li class="list-group-item list-group-item-info" ng-if="files.length==0">
+                                Folder Empty
+                            </li>   
+                        </ul>
+                        <form class="dropzone" drop-zone id="file-dropzone">
+                            <input type="hidden" name="repoSlug" value="{{repo.slug}}"/>
+                            <div class="upload-btn link" id="upload" >Commit</div>
+                        </form>
+                    </div>
+                    <div ng-show="list==false;">
+                        <div class="file-content">
+                            <h2>{{openedFile}}</h2>
+                            <div class="division"></div>
+                            <div id="lines" class="col-md-1" style="border-right:1px solid #eeeeee;text-align:right;color:rgb(225,51,26);"></div>
+                            <div id="content" class="col-md-11" style="line-height: 20px;"></div>
+                        </div>
+                    </div>
                 </div>
-                <form class="dropzone" drop-zone id="file-dropzone">
-                    <input type="hidden" name="repoSlug" value="{{repo.slug}}"/>
-                    <div class="upload-btn link" id="upload" >Commit</div>
-                </form>
             </div>
         </div>
         <div class="col-md-3">
+            <br>
             <div class="panel panel-default">
             <div class="panel-heading"><strong>Repository Stats</strong>
                 <span class="glyphicon glyphicon-stats pull-right"></span>
@@ -89,8 +106,8 @@
         	</div>
         	    <ul class="list-group">
         	    	<li class="list-group-item" data-ng-show="addteam">
-        	    		<user-suggestions repo-id="repo._id"></user-suggestions>
-        	    	</li>
+                        <user-suggestions repo-id="repo._id"></user-suggestions>
+        	        </li>
                     <li class="list-group-item" ng-repeat="contributor in repo.contributors">{{contributor.name}}</li>
                 </ul>
             </div>

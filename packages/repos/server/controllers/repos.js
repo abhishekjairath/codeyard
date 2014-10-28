@@ -439,8 +439,8 @@ exports.deleteFile = function(req,res){
 };
 
 exports.getFile = function(req,res){
-	var filePath = req.params.filepath,
-		result = {};
+	var filePath = (req.params.filepath).replace(/_/g,'/');
+	var	result = {};
 
 	fs.readFile(repoPath+filePath,"utf8",function(err,data){
 		if(err){

@@ -74,6 +74,8 @@ angular.module('mean.repos').controller('ReposController', ['$scope', 'Global', 
     $scope.currentPath = [];
     $scope.currentPath.push($scope.reposlug);
     $scope.repo;
+    $scope.list = true;
+    $scope.plusSignFolder = true;
     $scope.getRepo = function(){
         Repos.getRepo($scope.reposlug).success(function(data){
             $scope.repo = data.repo;
@@ -134,6 +136,8 @@ angular.module('mean.repos').controller('ReposController', ['$scope', 'Global', 
             else
                 break;
         };
+        $scope.list = true;
+        $scope.plusSignFolder = true;
         viewPath();
     };
 
@@ -152,12 +156,52 @@ angular.module('mean.repos').controller('ReposController', ['$scope', 'Global', 
             }
         }
     };
+
+    $scope.viewFile = function(file){
+        $scope.list = false;
+        $scope.plusSignFolder = false;
+        var path = (file.path).replace(/\//g,'_');
+        Repos.getFile(path).success(function(res){
+            if(res.data){
+                $scope.openedFile = file.name+'.'+file.tag;
+                document.getElementById('content').innerText = '';
+                document.getElementById('content').innerText += res.data;
+                var divHeight = document.getElementById('content').offsetHeight;
+                var lineHeight = parseInt(document.getElementById('content').style.lineHeight);
+                var lines = divHeight/lineHeight;
+                for (var i = 1; i <= lines; i++) {
+                    document.getElementById('lines').innerText += i+'\n';
+                };
+            }else{
+                document.getElementById('content').innerHTML = "<strong>The file for this Repository does not exist.</strong>";
+            }
+        }).error(function(error){
+            document.getElementById('content').innerHTML = "<strong>There was some problem with the server.</strong>";
+        });
+    };
     
+}]).controller('ReadMeController', ['$scope', 'Global', 'Repos',
+  function($scope, Global, Repos) {
     
+    $scope.viewReadMe = function(reposlug){
+        var path = (reposlug+'_readme.txt');
+        Repos.getFile(path).success(function(file){
+            if(file.data){
+                var content = file.data.replace(/\r\n/g,'<br>');
+                document.getElementById('content').innerHTML = content;
+            }else{
+                document.getElementById('content').innerHTML = "The Readme file for this Repository does not exist. Please add a <strong>readme.txt</strong> file to the home directory.";
+            }
+        }).error(function(error){
+            document.getElementById('content').innerHTML = "There was some problem with the server.";
+        });
+    };
+
 }]).directive('dropZone', function() {
     return{ 
         transclude: false,    
         link: function(scope, element, attrs) {
+                
                 element.dropzone({ 
                     url: "/repos/file",
                     maxFilesize: 100,
@@ -194,8 +238,7 @@ angular.module('mean.repos').controller('ReposController', ['$scope', 'Global', 
                 
             }
     }  
-})
-.directive('userSuggestions',function($http,$compile){
+}).directive('userSuggestions',function($http,$compile){
     return {
         restrict: 'E',
         transclude: true,
@@ -238,3 +281,4 @@ angular.module('mean.repos').controller('ReposController', ['$scope', 'Global', 
       }
   };
 });
+

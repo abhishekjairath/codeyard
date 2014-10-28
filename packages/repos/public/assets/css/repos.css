@@ -121,3 +121,11 @@ span.twitter-typeahead {
 .input-group.input-group-sm span.twitter-typeahead .tt-dropdown-menu {
   top: 28px !important;
 }
+
+.file-content{
+    padding-left: 25px;
+    padding-right: 25px;
+    margin-bottom: 25px;
+    overflow-x:auto;
+    font-family: Consolas,Menlo,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace,serif;
+}
