@@ -48,7 +48,7 @@
           <div class="division"></div>
               <div class="col-md-12">
                 <div class="list-group" data-ng-init="viewRepos(global.user.username);">
-                    <a ui-sref="reponame({name:item.slug})" class="list-group-item" data-ng-repeat="item in repos | orderBy:repo.updated | filter:visibility | filter:query:false">
+                    <a ui-sref="reponame({name:item.slug})" class="list-group-item" data-ng-repeat="item in repos | orderBy:'repo.updated':reverse | filter:visibility | filter:query:false">
                       <br>
                       <span class="badge" title="Public" data-ng-show="item.ispublic">
                         <span class="glyphicon glyphicon-book"></span>

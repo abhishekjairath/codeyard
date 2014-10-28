@@ -1,1 +1,8 @@
-<h1>READ ME</h1>
+<section data-ng-controller="ReadMeController">
+<div class="panel panel-default">
+<div class="file-content">
+<h2>{{repo.name}} | <span class="file-size">readme.txt</span></h2>
+<div class="division"></div>
+<div id="content" data-ng-init="viewReadMe(repo.slug);"></div>
+</div>
+</section>

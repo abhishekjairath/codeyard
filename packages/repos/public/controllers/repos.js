@@ -60,9 +60,9 @@ angular.module('mean.repos').controller('ReposController', ['$scope', 'Global', 
 
     $scope.visibility = function(item){
         if($scope.visible=='1')
-            return item.repo.ispublic;
+            return item.ispublic;
         else if($scope.visible=='2')
-            return !item.repo.ispublic;
+            return !item.ispublic;
         else if($scope.visible=='3')
             return item;
     };
@@ -164,7 +164,9 @@ angular.module('mean.repos').controller('ReposController', ['$scope', 'Global', 
         Repos.getFile(path).success(function(res){
             if(res.data){
                 $scope.openedFile = file.name+'.'+file.tag;
+                $scope.fileSize = file.size/1000+' KB';
                 document.getElementById('content').innerText = '';
+                document.getElementById('lines').innerText = '';
                 document.getElementById('content').innerText += res.data;
                 var divHeight = document.getElementById('content').offsetHeight;
                 var lineHeight = parseInt(document.getElementById('content').style.lineHeight);
@@ -187,13 +189,12 @@ angular.module('mean.repos').controller('ReposController', ['$scope', 'Global', 
         var path = (reposlug+'_readme.txt');
         Repos.getFile(path).success(function(file){
             if(file.data){
-                var content = file.data.replace(/\r\n/g,'<br>');
-                document.getElementById('content').innerHTML = content;
+                document.getElementById('content').innerText = file.data;
             }else{
                 document.getElementById('content').innerHTML = "The Readme file for this Repository does not exist. Please add a <strong>readme.txt</strong> file to the home directory.";
             }
         }).error(function(error){
-            document.getElementById('content').innerHTML = "There was some problem with the server.";
+            document.getElementById('content').innerHTML = "<strong>There was some problem with the server.</strong>";
         });
     };
 
