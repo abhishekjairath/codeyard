@@ -93,7 +93,7 @@ exports.createRepo = function(req,res){
 					}
 					else
 					{
-						User.findOneAndUpdate({_id:req.user._id},{$addToSet:{repos:{repo:response._id,isowner:true}}},function(err1,response1){
+						User.findOneAndUpdate({_id:req.user._id},{$addToSet:{repos:response._id}},function(err1,response1){
 							if(err1){
 								console.log(err1);
 								result = {
@@ -123,7 +123,7 @@ exports.createRepo = function(req,res){
 exports.getRepo = function(req,res){
 	var repoSlug = req.params.reposlug,
 		result = {};
-	Repo.findOne({slug:repoSlug},function(err,response){
+	Repo.findOne({slug:repoSlug}).populate('contributors','name username').exec(function(err,response){
 		if(err){
 			console.log(err);
 			result = {
@@ -145,7 +145,7 @@ exports.getRepo = function(req,res){
 exports.viewAll = function(req,res){
 	var username = req.params.username,
 		result = {};
-	User.find({username:username},{hashed_password:false,salt:false}).populate('repos.repo','slug _id desc ispublic updated').exec(function(err,response){
+	User.find({username:username},{hashed_password:false,salt:false}).populate('repos','slug _id desc ispublic updated owner').exec(function(err,response){
 		if(err){
 			console.log(err);
 			result = {
@@ -201,7 +201,7 @@ exports.deleteRepo = function(req,res){
 								res.jsonp(result);
 							}
 							else{
-								User.update({_id:owner},{$pull:{repos:{repo:repoid}}},function(err1,res1){
+								User.update({_id:owner},{$pull:{repos:repoid}},function(err1,res1){
 									if(err1){
 										console.log(err1);
 										result = {
@@ -330,11 +330,18 @@ exports.uploadFile = function(req,res){
 	var paths = [],
 		files = [],
 		repoSlug = req.body.repoSlug,
+		isArray,
 		result = {};
 	Object.keys(req.files).forEach(function (key) {
         files.push(req.files[key]);
         });
-	processFiles(files,req.body.path,repoSlug, function(err,response){
+	isArray = Array.isArray(req.body.path);
+	console.log(isArray);
+	if(isArray)
+		paths = req.body.path;
+	else
+		paths.push(req.body.path);
+	processFiles(files,paths,repoSlug, function(err,response){
 		if(err)
 			console.log(err);
 		res.jsonp(response);
@@ -347,11 +354,12 @@ var processFiles = function(files,path,repoSlug,cb){
 		i = 0,
 		extension = '',
 		fileName = '',
+		size,
 		filePath = '';
-		console.log(files);
 	async.eachSeries(files,function(item,iterate){
 		fs.readFile(item.path,function(err,data){
 				extension = item.extension;
+				size = item.size;
 			    fileName = item.originalname.replace('.'+extension,'');
 				filePath = config.repoPath+path[i]+'/'+item.originalname;
 			if(err){
@@ -365,7 +373,7 @@ var processFiles = function(files,path,repoSlug,cb){
 						iterate();
 					}
 					else {
-						Repo.findOneAndUpdate({slug:repoSlug},{updated:Date.now(),$push:{files:{path:path[i]+'/'+item.originalname, tag:extension, name:fileName}}},function(error1,response1){
+						Repo.findOneAndUpdate({slug:repoSlug},{updated:Date.now(),$push:{files:{path:path[i]+'/'+item.originalname, tag:extension, name:fileName, size:size}}},function(error1,response1){
 							if(error1){
 								console.log(error1);
 							}
@@ -461,10 +469,10 @@ exports.uploadRepo = function(req,res){
 
 exports.addCollab = function(req,res){
 	var repoid = req.params.repoid,
-		uid = req.body.uid,
+		username = req.body.username,
 		result = {};
 
-	User.findOneAndUpdate({_id:uid},{$addToSet:{repos:{repo:repoid,isowner:false}}},function(err1,response1){
+	User.findOneAndUpdate({username:username},{$addToSet:{repos:repoid}},function(err1,response1){
 		if(err1){
 			console.log(err1)
 			result = {
@@ -473,22 +481,41 @@ exports.addCollab = function(req,res){
 			};
 			res.jsonp(result);
 		}
+		else if(response1 == null){
+			result = {
+				'error':1,
+				'error_msg':'No user with username "'+username+'" exists'
+			};
+			res.jsonp(result);
+		}
 		else{
-			Repo.findOneAndUpdate({_id:repoid},{updated:Date.now(),$addToSet:{contributors:uid}},function(err2,response2){
+			Repo.findOneAndUpdate({_id:repoid},{updated:Date.now(),$addToSet:{contributors:response1._id}},function(err2,response2){
 				if(err2){
 					console.log(err2)
 					result = {
 						'error':1,
 						'error_msg':'There was an error while adding collaborator'
 					};
+					res.jsonp(result);
 				}
 				else{
-					result = {
-						'error':0,
-						'error_msg':'collaborator successfully added'
-					};
+					Repo.findOne({_id:repoid},'contributors').populate('contributors','name _id username').exec(function(err3,response3){
+						if(err3){
+							result = {
+								'error':0,
+								'error_msg':'collaborator successfully added',
+							};
+						}
+						else{
+							result = {
+								'error':0,
+								'error_msg':'collaborator successfully added',
+								'collaborators':response3.contributors
+							};
+						}
+						res.jsonp(result);
+					});
 				}
-				res.jsonp(result);
 			});
 		}
 	});
