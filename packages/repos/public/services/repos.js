@@ -39,6 +39,10 @@ angular.module('mean.repos').factory('Repos', ['$http',
     factory.getFile = function(filepath){
       return $http.get('/repos/file/'+filepath);
     }
+
+    factory.getWiki = function(repoId){
+      return $http.get('/articles/'+repoId);
+    }
     return factory; 
   }
 ]);

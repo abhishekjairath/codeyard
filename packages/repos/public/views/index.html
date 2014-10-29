@@ -21,10 +21,13 @@
             <a ui-sref="repos.create">Create Repository</a>
           </li>
           <li class="{{my_tab}}" data-ng-click="menu('myrepos');">
-            <a ui-sref="repos">My Repositories</a>
+            <a ui-sref="repos">Repositories</a>
           </li>
-          <li class="{{commit_tab}}" data-ng-click="menu('mycommits');">
+          <li class="{{commits_tab}}" data-ng-click="menu('mycommits');">
             <a ui-sref="repos.commits">Past Commits</a>
+          </li>
+          <li class="{{articles_tab}}" data-ng-click="menu('articles');">
+            <a ui-sref="repos.articles">Articles</a>
           </li>
       </ul>
       <br>

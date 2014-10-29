@@ -13,14 +13,16 @@ angular.module('mean.articles').controller('ArticlesController', ['$scope', '$st
       if (isValid) {
         var article = new Articles({
           title: this.title,
-          content: this.content
+          content: this.content,
+          repo: this.repo
         });
         article.$save(function(response) {
-          $location.path('articles/' + response._id);
+          $location.path('repos/articles');
         });
 
         this.title = '';
         this.content = '';
+        this.repo = '';
       } else {
         $scope.submitted = true;
       }
@@ -37,7 +39,7 @@ angular.module('mean.articles').controller('ArticlesController', ['$scope', '$st
         }
       } else {
         $scope.article.$remove(function(response) {
-          $location.path('articles');
+          $scope.find();
         });
       }
     };

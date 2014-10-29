@@ -13,16 +13,24 @@ angular.module('mean.repos').config(['$stateProvider',
     .state('repos.commits', {
       url: '/commits',
       templateUrl: 'repos/views/commits.html'
-    }).state('reponame', {
+    })
+    .state('repos.articles', {
+      url: '/articles',
+      templateUrl: 'articles/views/list.html'
+    })
+    .state('reponame', {
       url: '/repos/:name',
       templateUrl: 'repos/views/repository.html'
-    }).state('reponame.commits', {
+    })
+    .state('reponame.commits', {
       url: '',
       templateUrl: 'repos/views/repoCommits.html'
-    }).state('reponame.readme', {
+    })
+    .state('reponame.readme', {
       url: '',
       templateUrl: 'repos/views/readme.html'
-    }).state('reponame.wiki', {
+    })
+    .state('reponame.wiki', {
       url: '',
       templateUrl: 'repos/views/wiki.html'
     });

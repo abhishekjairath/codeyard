@@ -25,13 +25,13 @@ angular.module('mean.articles').config(['$stateProvider',
 
     // states for my app
     $stateProvider
-      .state('all articles', {
+    /*  .state('all articles', {
         url: '/articles',
         templateUrl: 'articles/views/list.html',
         resolve: {
           loggedin: checkLoggedin
         }
-      })
+      })*/
       .state('create article', {
         url: '/articles/create',
         templateUrl: 'articles/views/create.html',

@@ -19,7 +19,8 @@ angular.module('mean.repos').controller('ReposController', ['$scope', 'Global', 
     $scope.menu = function(tab){
         $scope.create_tab = (tab=='create')?'active':'';
         $scope.my_tab = (tab=='myrepos')?'active':'';
-        $scope.commit_tab = (tab=='mycommits')?'active':'';
+        $scope.commits_tab = (tab=='mycommits')?'active':'';
+        $scope.articles_tab = (tab=='articles')?'active':'';
     };
     
     $scope.createRepo = function(repo){
@@ -195,6 +196,17 @@ angular.module('mean.repos').controller('ReposController', ['$scope', 'Global', 
             }
         }).error(function(error){
             document.getElementById('content').innerHTML = "<strong>There was some problem with the server.</strong>";
+        });
+    };
+
+}]).controller('WikiController', ['$scope', 'Global', 'Repos',
+  function($scope, Global, Repos) {
+    
+    $scope.viewWiki = function(repoId){
+        Repos.getWiki(repoId).success(function(articles){
+           $scope.articles = articles;
+        }).error(function(error){
+           $scope.error_msg = "There was some error with the server.";
         });
     };
 

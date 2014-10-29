@@ -84,8 +84,20 @@ exports.show = function(req, res) {
 /**
  * List of Articles
  */
-exports.all = function(req, res) {
-  Article.find().sort('-created').populate('user', 'name username').exec(function(err, articles) {
+exports.allUser = function(req, res) {
+  Article.find({'user':req.user._id}).sort('-created').populate('user', 'name username').exec(function(err, articles) {
+    if (err) {
+      return res.json(500, {
+        error: 'Cannot list the articles'
+      });
+    }
+    res.json(articles);
+
+  });
+};
+
+exports.allRepo = function(req, res) {
+  Article.find({'repo':req.params.repoId}).sort('-created').populate('user', 'name username').exec(function(err, articles) {
     if (err) {
       return res.json(500, {
         error: 'Cannot list the articles'
