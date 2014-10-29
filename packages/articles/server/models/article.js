@@ -28,6 +28,11 @@ var ArticleSchema = new Schema({
   user: {
     type: Schema.ObjectId,
     ref: 'User'
+  },
+  repo: {
+    type: Schema.ObjectId,
+    ref: 'Repo',
+    required: true
   }
 });
 
@@ -41,6 +46,10 @@ ArticleSchema.path('title').validate(function(title) {
 ArticleSchema.path('content').validate(function(content) {
   return !!content;
 }, 'Content cannot be blank');
+
+ArticleSchema.path('repo').validate(function(repo) {
+  return !!repo;
+}, 'Repo cannot be blank');
 
 /**
  * Statics

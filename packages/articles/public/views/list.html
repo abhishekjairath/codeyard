@@ -1,3 +1,4 @@
+<section data-ng-init="menu('articles');">
 <section data-ng-controller="ArticlesController" data-ng-init="find()">
   <ul class="articles unstyled">
     <li data-ng-repeat="article in articles">
@@ -17,5 +18,6 @@
       <div>{{article.content}}</div>
     </li>
   </ul>
-  <h1 data-ng-hide="!articles || articles.length">No articles yet. <br> Why don't you <a href="/#!/articles/create">Create One</a>?</h1>
+  <h1 data-ng-hide="!articles || articles.length">No articles yet. <br> Why don't you <a href="#!/articles/create">Create One</a> ?</h1>
+</section>
 </section>
