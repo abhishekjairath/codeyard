@@ -131,3 +131,19 @@ span.twitter-typeahead {
 }
 
 .file-size{font-size: 15px;}
+
+.article-btn{
+  font-size: 15px;
+  border: 1px solid #eeeeee;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  cursor: pointer;
+  font-family: Calibri;
+  letter-spacing: 0.05em;
+  text-align: center;
+}
+.article-btn:hover{
+    background-color: rgb(225,51,26);
+    color:#eeeeee;
+    transition:background-color,color 0.3s ease;
+}

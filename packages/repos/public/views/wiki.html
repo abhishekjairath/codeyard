@@ -1,21 +1,24 @@
 <section data-ng-controller="WikiController" data-ng-init="viewWiki(repo._id)">
-  <ul class="articles unstyled">
-    <li data-ng-repeat="article in articles">
-      <span>{{article.created | date:'medium'}}</span> /
-      <span>{{article.user.name}}</span>
-      <h2>
+  <div class="list-group">
+    <li data-ng-repeat="article in articles" class="list-group-item">
+      <h2 class="list-group-item-heading">
         <a data-ng-href="#!/articles/{{article._id}}">{{article.title}}</a>
         <span data-ng-if="hasAuthorization(article)">
           <a class="btn" href="/#!/articles/{{article._id}}/edit">
-            <i class="glyphicon glyphicon-edit"></i>
+            <i class="glyphicon glyphicon-edit" title="Edit Article"></i>
           </a>
           <a class="btn" data-ng-click="remove(article);">
-            <i class="glyphicon glyphicon-trash"></i>
+            <i class="glyphicon glyphicon-trash" title="Remove Article"></i>
           </a>
         </span>
       </h2>
-      <div>{{article.content}}</div>
+      <strong>
+        <span>{{article.created | date:'medium'}}</span> /
+        <span>{{article.user.name}}</span>
+      </strong>
+      <p class="list-group-item-text">{{article.content | fewLinesFilter}}...</p>
     </li>
-  </ul>
+  </div>
   <h1 data-ng-hide="!articles || articles.length">No articles yet. <br> Why don't you <a href="#!/articles/create">Create One</a> ?</h1>
+<br><br>
 </section>

@@ -202,6 +202,11 @@ angular.module('mean.repos').controller('ReposController', ['$scope', 'Global', 
 }]).controller('WikiController', ['$scope', 'Global', 'Repos',
   function($scope, Global, Repos) {
     
+    $scope.hasAuthorization = function(article) {
+      if (!article || !article.user) return false;
+      return $scope.global.isAdmin || article.user._id === $scope.global.user._id;
+    };
+
     $scope.viewWiki = function(repoId){
         Repos.getWiki(repoId).success(function(articles){
            $scope.articles = articles;
@@ -210,7 +215,11 @@ angular.module('mean.repos').controller('ReposController', ['$scope', 'Global', 
         });
     };
 
-}]).directive('dropZone', function() {
+}]).filter('fewLinesFilter', function () {
+    return function (text) {
+        if (text !== undefined) return text.substring(0,200);
+    };
+}).directive('dropZone', function() {
     return{ 
         transclude: false,    
         link: function(scope, element, attrs) {

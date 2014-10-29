@@ -1,8 +1,10 @@
 <section data-ng-controller="ArticlesController" data-ng-init="findOne()">
-  <form name="articleForm" class="form-horizontal col-md-6" role="form" data-ng-submit="update(articleForm.$valid)" novalidate>
+<br><br>
+<div class="container">
+  <form name="articleForm" class="form-horizontal" role="form" data-ng-submit="update(articleForm.$valid)" novalidate>
     <div class="form-group" ng-class="{ 'has-error' : submitted && articleForm.title.$invalid }">
       <label mean-token="'edit-title'" for="title" class="col-md-2 control-label">Title</label>
-      <div class="col-md-10">
+      <div class="col-md-6">
         <input name="title" type="text" class="form-control" data-ng-model="article.title" id="title" placeholder="Title" required>
         <div ng-show="submitted && articleForm.title.$invalid" class="help-block">
           <p ng-show="articleForm.title.$error.required">Title is required</p>
@@ -13,7 +15,7 @@
     <div class="form-group" ng-class="{ 'has-error' : submitted && articleForm.content.$invalid }">
       <label mean-token="'edit-content'" for="content" class="col-md-2 control-label">Content</label>
       <div class="col-md-10">
-        <textarea name="content" data-ng-model="article.content" id="content" cols="30" rows="10" placeholder="Content" class="form-control" required></textarea>
+        <textarea name="content" data-ng-model="article.content" id="content" cols="30" rows="15" placeholder="Content" class="form-control" required></textarea>
         <div ng-show="submitted && articleForm.content.$invalid" class="help-block">
           <p ng-show="articleForm.content.$error.required">Content is required</p>
         </div>
@@ -25,4 +27,19 @@
       </div>
     </div>
   </form>
+</div>
 </section>
+<br><br>
+<div class="footer">
+  <img class="col-md-4 footer-img" src="/theme/assets/img/woman_ninja_forg_pass.png"/>
+  <div class="col-md-8 team">
+    <div class="pull-right">
+      <span class="glyphicon glyphicon-copyright-mark"></span>Copyright 2014<br>
+      <div class="footer-logo">C<span class="glyphicon glyphicon-eye-open"></span>DEYARD</div>
+    </div>
+      Our Developer Team:
+      <li>Aman Srivastava</li>
+      <li>Abhishek Jairath</li>
+      <li>Shubhank Srivastava</li>
+    </div>
+</div>

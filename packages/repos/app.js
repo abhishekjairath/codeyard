@@ -23,6 +23,12 @@ Repos.register(function(app, auth, database) {
     roles: ['authenticated'],
     menu: 'main'
   });
+  Repos.menus.add({
+    title: 'Articles',
+    link: 'repos.articles',
+    roles: ['authenticated'],
+    menu: 'main'
+  });
 
   /**
     //Uncomment to use. Requires meanio@0.3.7 or above
