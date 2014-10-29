@@ -14,7 +14,7 @@ module.exports = function(Articles, app, auth) {
 
   app.route('/articles').post(auth.requiresLogin, articles.create);
   app.route('/articles').get(articles.allUser);
-  app.route('/articles/:repoId').get(articles.allRepo);
+  app.route('/wiki/:repoId').get(articles.allRepo);
   app.route('/articles/:articleId')
     .get(articles.show)
     .put(auth.requiresLogin, hasAuthorization, articles.update)

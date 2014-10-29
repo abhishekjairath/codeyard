@@ -1,23 +1,37 @@
 <section data-ng-init="menu('articles');">
 <section data-ng-controller="ArticlesController" data-ng-init="find()">
-  <ul class="articles unstyled">
-    <li data-ng-repeat="article in articles">
-      <span>{{article.created | date:'medium'}}</span> /
-      <span>{{article.user.name}}</span>
-      <h2>
+  <div>
+    <a href="#!/articles/create">
+    <div class="col-md-3 pull-right article-btn">
+      <span class="glyphicon glyphicon-list-alt"></span> New Article
+    </div>
+    </a>
+    <div class="col-md-6 input-group">
+      <input type="text" class="form-control" placeholder="Search..." ng-model="query">
+      <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+    </div>
+  </div>
+  <div class="division"></div>
+  <div class="list-group">
+    <li data-ng-repeat="article in articles | filter:query:false" class="list-group-item">
+      <h2 class="list-group-item-heading">
         <a data-ng-href="#!/articles/{{article._id}}">{{article.title}}</a>
         <span data-ng-if="hasAuthorization(article)">
           <a class="btn" href="/#!/articles/{{article._id}}/edit">
-            <i class="glyphicon glyphicon-edit"></i>
+            <i class="glyphicon glyphicon-edit" title="Edit Article"></i>
           </a>
           <a class="btn" data-ng-click="remove(article);">
-            <i class="glyphicon glyphicon-trash"></i>
+            <i class="glyphicon glyphicon-trash" title="Remove Article"></i>
           </a>
         </span>
       </h2>
-      <div>{{article.content}}</div>
+      <strong>
+        <span>{{article.created | date:'medium'}}</span> /
+        <span>{{article.user.name}}</span>
+      </strong>
+      <div>{{article.content|fewLinesFilter}}...</div>
     </li>
-  </ul>
+  </div>
   <h1 data-ng-hide="!articles || articles.length">No articles yet. <br> Why don't you <a href="#!/articles/create">Create One</a> ?</h1>
 </section>
 </section>

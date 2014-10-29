@@ -4,3 +4,16 @@ h1 {
 ul.articles li:not(:last-child) {
 	border-bottom: 1px solid #ccc
 }
+
+.article-data{
+	font-style: bold;
+	font-family: Calibri;
+}
+.article-title{
+	font-family: Calibri;
+	font-size: 50px;
+}
+.article-content{
+	font-family: Century Gothic,Calibri;
+	font-size: 18px;
+}
