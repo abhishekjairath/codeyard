@@ -3,15 +3,15 @@ from pymongo import MongoClient
 from hotqueue import HotQueue
 import json
 
-def func(f1,f2):
+def func(name,path):
 	d={}
 	addedfinal=[]
 	deletedfinal=[]
 	delete_add_then=[]
 	delete_add_now=[]
-	if f2 != "null":
-		file1=open(f2,'r')
-		file2=open("//home/aman/Desktop/Work/hello/temp/"+f1,'r')
+	if path != "null":
+		file1=open(path,'r')
+		file2=open("//home/aman/Desktop/Work/hello/temp/"+name,'r')
 		read1=file1.readlines()
 		read2=file2.readlines()
 		file1dec1={}
@@ -52,7 +52,7 @@ def func(f1,f2):
 		addedfinal=list(set(added)-set(delete_add_now))
 		deletedfinal=list(set(deleted)-set(delete_add_then))
 	else:
-		o=open("//home/aman/Desktop/Work/hello/temp/"+f1,'r')
+		o=open("//home/aman/Desktop/Work/hello/temp/"+name,'r')
 		addedfinal=o.readlines()
 
 
@@ -74,8 +74,8 @@ def func(f1,f2):
 
 
 
-	d['file_name']=f1
-	d['file_size']=str(os.path.getsize("//home/aman/Desktop/Work/hello/temp/"+f1)/float(1000))+"Kb"
+	d['file_name']=name
+	d['file_size']=str(os.path.getsize("//home/aman/Desktop/Work/hello/temp/"+name)/float(1000))+"Kb"
 	d['addlines']=addedfinallast
 	d['deletelines']=deletedfinallast
 	d['add_delete']=add_deletedlast
@@ -91,19 +91,34 @@ def func(f1,f2):
 	
 
 def Main():
-	client=MongoClient('127.0.0.1',27017)
+	
+	client=MongoClient('127.0.0.1',27017)              # mongo connection
 	db=client['new']
-	q=HotQueue("Q",serializer=json)
+	
+	q=HotQueue("Q",serializer=json)                    #redis queue listener implementation using Hotqueue and usind json serializer
+	
 	for a in q.consume():
 		files=[]
 		
 		for item in a['file']:
 			files.append(func(item['name'],item['path']))
-		commits={'commit':files,'commit_description':a['commit_desp'],'commit_heading':a['commit_head'],'time_created':a['time'],'comment':[],'repo_id':a['repoid'],'user_id':a['userid']}
 
+		commits={
+					'commit':files,
+					'commit_description':a['commit_desp'],
+					'commit_heading':a['commit_head'],
+					'time_created':a['time'],
+					'comment':[],
+					'repo_id':a['repoid'],
+					'user_id':a['userid']
+				}
+		
 		commitid = db.commit.insert(commits)
+		
 		db.repo.update({'_id':commits['repo_id']},{'$push':{'commit_id':commitid}})
+		
 		db.user.update({'_id':commits['user_id']},{'$push':{'commit_id':commitid}})
+		
 		print commits
 
 if __name__=='__main__':
