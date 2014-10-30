@@ -48,6 +48,10 @@ var RepoSchema = new Schema({
       type:String,
       default:null
     }
+  }],
+  commits:[{
+    type: Schema.ObjectId,
+    ref: 'Commit'
   }]
 });
 
