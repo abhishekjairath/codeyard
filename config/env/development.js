@@ -41,5 +41,8 @@ module.exports = {
       pass: 'PASSWORD'
     }
   },
-  repoPath : '/home/abhishek/Documents/repos/'
+  repoPath : '/home/abhishek/Documents/repos/',
+  redis : {
+    pushCommits : 'hotqueue:cpush'
+  }
 };

@@ -2,22 +2,35 @@ import os
 from pymongo import MongoClient 
 from hotqueue import HotQueue
 import json
+import datetime
+from bson.objectid import ObjectId
 
-def func(name,path):
+def replace(oldfile,newfile):
+	f=open(oldfile,'w')
+	g=open(newfile,'r')
+	text=g.read()
+	f.write(text)
+	f.close()
+	g.close()
+	os.remove(newfile)
+
+def func(name,path,isnew,extension,db,repoid):
+	file_dir="//home/aman/project/codeyard/commit/file_system/repos/"
 	d={}
 	addedfinal=[]
 	deletedfinal=[]
 	delete_add_then=[]
 	delete_add_now=[]
-	if path != "null":
-		file1=open(path,'r')
-		file2=open("//home/aman/Desktop/Work/hello/temp/"+name,'r')
+	file1dec1={}
+	file1dec2={}
+	file2dec1={}
+	file2dec2={}
+	updations=[]
+	if isnew == "False":
+		file1=open(file_dir+path+name,'r')
+		file2=open(file_dir+path+"temp_"+name,'r')
 		read1=file1.readlines()
 		read2=file2.readlines()
-		file1dec1={}
-		file1dec2={}
-		file2dec1={}
-		file2dec2={}
 		i=j=0
 		k=1
 		while i<len(read1):
@@ -44,80 +57,93 @@ def func(name,path):
 			check_name=file1dec2[lineno]
 			if(check_name in deleted):
 				b={}
-				b={'then':check_name,'now':added[m],'line_no':lineno}
-				add_deletedlast.append(b)
+				b={'content_then':check_name,'content_now':added[m],'line':lineno,'status':2}
+				updations.append(b)
 				delete_add_then.append(check_name)
 				delete_add_now.append(added[m])
 			m=m+1
 		addedfinal=list(set(added)-set(delete_add_now))
 		deletedfinal=list(set(deleted)-set(delete_add_then))
+
+		replace(file_dir+path+name,file_dir+path+"temp_"+name)
+
 	else:
-		o=open("//home/aman/Desktop/Work/hello/temp/"+name,'r')
+		o=open(file_dir+path+"temp_"+name,'r')
 		addedfinal=o.readlines()
+		os.rename(file_dir+path+"temp_"+name,file_dir+path+name)	
+		i=0
+		k=1
+		while i<len(addedfinal):
+		#read1[i]=read1[i].strip()
+			file2dec1[addedfinal[i]]=k
+			k=k+1
+			i=i+1
+		filesize = os.path.getsize(file_dir+path+name);
+		fileupdate={'path':path,'tag':extension,'name':name,'size':filesize}
+		db.repo.update({'_id':ObjectId(repoid)},{'$push':{'files':fileupdate}})
 
-
-	addedfinallast=[]
-	deletedfinallast=[]
-	
 	
 	if  len(addedfinal)>0:
 		for item in addedfinal:
 			b={}
-			b={'then':'null','now':item,'line_no':file2dec1[item]}
-			addedfinallast.append(b)
+			b={'content_then':'null','content_now':item,'line':file2dec1[item],'status':0}
+			updations.append(b)
 	
 	if len(deletedfinal)>0:
 		for item in deletedfinal:
 			b={}
-			b={'then':item,'now':'null','line_no':file1dec1[item]}
-			deletedfinallast.append(b)
-
-
-
-	d['file_name']=name
-	d['file_size']=str(os.path.getsize("//home/aman/Desktop/Work/hello/temp/"+name)/float(1000))+"Kb"
-	d['addlines']=addedfinallast
-	d['deletelines']=deletedfinallast
-	d['add_delete']=add_deletedlast
-
+			b={'content_then':item,'content_now':'null','line':file1dec1[item],'status':1}
+			updations.append(b)
+	
+	d['file']=name
+	d['updations']=updations
+	
+	
 	return d
 
 
 
 
-#a='{"file":[{"name":"tes1.c","path":"/home/aman/Desktop/Work/hello/tes1.c"}],"commit_head":"new commit","commit_desp":"abcd","time":"12 sep","repoid":"1","userid":"2"}'
+#a = '{"file":[{"isnew":"False","name":"tes4.c","path":"Realtime/","extension":"c"}],"desc":"abcd","repoid":"54524083725c58f9d20eb77a","reposlug":"Realtime","userid":"54524059725c58f9d20eb779","username":"aman"}'
 
 
 	
 
 def Main():
-	
-	client=MongoClient('127.0.0.1',27017)              # mongo connection
-	db=client['new']
-	
-	q=HotQueue("Q",serializer=json)                    #redis queue listener implementation using Hotqueue and usind json serializer
-	
-	for a in q.consume():
-		files=[]
-		
-		for item in a['file']:
-			files.append(func(item['name'],item['path']))
 
-		commits={
-					'commit':files,
-					'commit_description':a['commit_desp'],
-					'commit_heading':a['commit_head'],
-					'time_created':a['time'],
-					'comment':[],
-					'repo_id':a['repoid'],
-					'user_id':a['userid']
-				}
+	client = MongoClient('127.0.0.1',27017)
+	
+	db = client['new']
+	
+	listen = HotQueue("cpush",serializer=json)
+
+	response = HotQueue("cpull",serializer=json)
+
+	
+	for a in listen.consume():
+		files = []
+
+		for item in a['file']:
+			files.append(func(item['name'],item['path'],item['isnew'],item['extension'],db,a['repoid']))
 		
+		commits = {
+					'changes'  : files,
+					'desc'     : a['desc'],
+					'created'  : datetime.datetime.utcnow(),
+					#'comment'  : [],
+					'repo'     : {'id':ObjectId(a['repoid']),'slug':a['reposlug']},
+					'user'     : {'id':ObjectId(a['userid']),'username':a['username']}
+				}
+
 		commitid = db.commit.insert(commits)
 		
-		db.repo.update({'_id':commits['repo_id']},{'$push':{'commit_id':commitid}})
+		db.repo.update({'_id':commits['repo']['id']},{'$push':{'commits':commitid}})
 		
-		db.user.update({'_id':commits['user_id']},{'$push':{'commit_id':commitid}})
+		db.user.update({'_id':commits['user']['id']},{'$push':{'commits':commitid}})
+		
+		responseobj= {'commitid':str(commitid),'userid':str(commits['user']['id'])}
+
+		response.put(responseobj)
 		
 		print commits
 

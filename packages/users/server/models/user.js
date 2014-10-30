@@ -45,7 +45,7 @@ var UserSchema = new Schema({
   },
   commits:[{
     type: Schema.ObjectId,
-    ref: 'User'
+    ref: 'Commit'
   }],
   repos : [
     {
