@@ -29,6 +29,12 @@ Repos.register(function(app, auth, database) {
     roles: ['authenticated'],
     menu: 'main'
   });
+  Repos.menus.add({
+    title: 'Commits',
+    link: 'repos.commits',
+    roles: ['authenticated'],
+    menu: 'main'
+  });
 
   /**
     //Uncomment to use. Requires meanio@0.3.7 or above

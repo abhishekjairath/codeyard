@@ -1,7 +1,7 @@
 .meanUser-example h1 {
     background-color: purple
 }
-.navbar-brand{font-size: 30px;font-family: AR DARLING, Arial Black;}
+.navbar-brand{font-size: x-large;font-family:Calibri, Arial Black;}
 .navbar-nav{background-color: none;}
 .navbar-nav > li:hover{background-color: rgb(225,51,26);transition:background-color 0.5s ease;}
 .navbar-brand span{font-size: 25px;margin-right: 5px;}
@@ -20,7 +20,7 @@
 	text-align: left;
 	margin-top: 10px;
 	letter-spacing: 0.2em;
-	font-family: AR DARLING, Arial Black;
+	font-family: Arial Black;
 }
 .title h2{
 	margin-top: 30px;

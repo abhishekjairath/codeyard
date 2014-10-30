@@ -2,7 +2,7 @@
     <div class="container" data-ng-init="getRepo();">
         <div class="col-md-9">
     	    <div>
-    	        <h2><span class="glyphicon glyphicon-book" title="Public" data-ng-show="repo.ispublic"></span>
+    	        <h3><span class="glyphicon glyphicon-book" title="Public" data-ng-show="repo.ispublic"></span>
                     <span class="glyphicon glyphicon-lock" title="Private" data-ng-show="!repo.ispublic"></span> 
     	        	{{global.user.username}} / {{repo.slug}}
     	        	<span class="glyphicon glyphicon-trash pull-right link" title="Delete this repo" ng-click="delRepo=true;"></span>
@@ -11,7 +11,7 @@
                         <span class="glyphicon glyphicon-ok-circle link" data-ng-click="deleteRepo(repo.slug);"></span>
                         <span class="glyphicon glyphicon-remove-circle link" data-ng-click="delRepo=false;"></span>
                     </div>
-    	        </h2> 
+    	        </h3> 
             </div>
             <div class="division"></div>
             <div>
@@ -63,6 +63,7 @@
                                     <span class="glyphicon glyphicon-file"></span>
                                     <a href="" ng-click="viewFile(file);">{{file.name}}.{{file.tag}}</a>
                                 </span>
+                                <span class="glyphicon glyphicon-trash pull-right link" title="Delete file" data-ng-click="deleteFile(file._id,file.path)"></span>
                             </li> 
                             <li class="list-group-item list-group-item-info" ng-if="files.length==0">
                                 Folder Empty
@@ -70,7 +71,11 @@
                         </ul>
                         <form class="dropzone" drop-zone id="file-dropzone">
                             <input type="hidden" name="repoSlug" value="{{repo.slug}}"/>
-                            <div class="upload-btn link" id="upload" >Commit</div>
+                            <input type="hidden" name="repoid" value="{{repo._id}}"/>
+                            <div class="col-md-2 pull-right upload-btn link" id="upload" >Commit</div>
+                            <div class="col-md-10">
+                                <input type="text" name="desc" class="form-control" placeholder="Description" ng-model="desc"/>
+                            </div>
                         </form>
                     </div>
                     <div ng-show="list==false;">

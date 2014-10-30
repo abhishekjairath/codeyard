@@ -1,6 +1,6 @@
 .link:hover{cursor: pointer;}
 .filters{
-	font-size: 18px;
+	font-size: medium;
 	letter-spacing: 0.1em;
 	color:rgb(100,100,100);
 }
@@ -9,9 +9,9 @@
 .filters .active{color:rgb(225,51,26);}
 
 .editDesc{margin-top: 20px;}
-.editDesc span{font-size: 25px;margin-top: 5px;}
+.editDesc span{font-size: medium;margin-top: 5px;}
 .upload-btn{
-	font-size: 30px;
+	font-size: medium;
 	border: 1px solid #eeeeee;
 	padding-top: 10px;
 	padding-bottom: 10px;
@@ -100,11 +100,12 @@ span.twitter-typeahead .tt-suggestion > p:focus {
   color: #ffffff;
   text-decoration: none;
   outline: 0;
-  background-color: #428bca;
+  background-color: rgb(225,51,26);
+  cursor: pointer;
 }
 span.twitter-typeahead .tt-suggestion.tt-cursor {
   color: #ffffff;
-  background-color: #428bca;
+  background-color: rgb(225,51,26);
 }
 span.twitter-typeahead {
   width: 100%;

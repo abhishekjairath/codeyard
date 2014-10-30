@@ -1,7 +1,7 @@
 <section data-ng-controller="WikiController" data-ng-init="viewWiki(repo._id)">
   <div class="list-group">
     <li data-ng-repeat="article in articles" class="list-group-item">
-      <h2 class="list-group-item-heading">
+      <h3 class="list-group-item-heading">
         <a data-ng-href="#!/articles/{{article._id}}">{{article.title}}</a>
         <span data-ng-if="hasAuthorization(article)">
           <a class="btn" href="/#!/articles/{{article._id}}/edit">
@@ -11,7 +11,7 @@
             <i class="glyphicon glyphicon-trash" title="Remove Article"></i>
           </a>
         </span>
-      </h2>
+      </h3>
       <strong>
         <span>{{article.created | date:'medium'}}</span> /
         <span>{{article.user.name}}</span>

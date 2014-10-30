@@ -43,6 +43,18 @@ angular.module('mean.repos').factory('Repos', ['$http',
     factory.getWiki = function(repoId){
       return $http.get('/wiki/'+repoId);
     }
+
+    factory.deleteFile = function(file){
+      return $http.post('/repos/file/delete',file);
+    }
+
+    factory.userCommits = function(username){
+      return $http.get("/"+username+"/commits");
+    }
+
+    factory.repoCommits = function(){
+      return $http.get("/repos/"+reposlug+"/commits");
+    }
     return factory; 
   }
 ]);

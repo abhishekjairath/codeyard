@@ -2,7 +2,8 @@
 
 angular.module('mean.repos').config(['$stateProvider',
   function($stateProvider) {
-    $stateProvider.state('repos', {
+    $stateProvider
+    .state('repos', {
       url: '/repos',
       templateUrl: 'repos/views/index.html'
     })
@@ -13,6 +14,10 @@ angular.module('mean.repos').config(['$stateProvider',
     .state('repos.commits', {
       url: '/commits',
       templateUrl: 'repos/views/commits.html'
+    })
+    .state('repos.commits.view', {
+      url: '/:id',
+      templateUrl: 'repos/views/viewCommit.html'
     })
     .state('repos.articles', {
       url: '/articles',
@@ -25,6 +30,10 @@ angular.module('mean.repos').config(['$stateProvider',
     .state('reponame.commits', {
       url: '',
       templateUrl: 'repos/views/repoCommits.html'
+    })
+    .state('reponame.commits.view', {
+      url: '',
+      templateUrl: 'repos/views/viewCommit.html'
     })
     .state('reponame.readme', {
       url: '',

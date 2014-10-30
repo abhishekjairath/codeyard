@@ -182,6 +182,15 @@ angular.module('mean.repos').controller('ReposController', ['$scope', 'Global', 
             document.getElementById('content').innerHTML = "<strong>There was some problem with the server.</strong>";
         });
     };
+
+    $scope.deleteFile = function(fileid,filepath){
+        Repos.deleteFile({fileId:fileid,filePath:filepath}).success(function(data){
+            $scope.getRepo();
+        }).error(function(data){
+            $scope.error = true;
+            $scope.error_msg = "Unable to delete file.";
+        });
+    };
     
 }]).controller('ReadMeController', ['$scope', 'Global', 'Repos',
   function($scope, Global, Repos) {
@@ -212,6 +221,27 @@ angular.module('mean.repos').controller('ReposController', ['$scope', 'Global', 
            $scope.articles = articles;
         }).error(function(error){
            $scope.error_msg = "There was some error with the server.";
+        });
+    };
+
+}]).controller('CommitsController', ['$scope', 'Global', 'Repos',
+  function($scope, Global, Repos) {
+
+    $scope.userCommits = function(){
+        userCommits($scope.global.user._id,function(commits){
+            $scope.commits = commits;
+        }).error(function(data){
+            $scope.error = true;
+            $scope.error_msg = "Unable to get user commits.";
+        });
+    };
+
+    $scope.repoCommits = function(reposlug){
+        repoCommits(reposlug,function(commits){
+            $scope.commits = commits;
+        }).error(function(data){
+            $scope.error = true;
+            $scope.error_msg = "Unable to get repo commits.";
         });
     };
 
@@ -253,6 +283,7 @@ angular.module('mean.repos').controller('ReposController', ['$scope', 'Global', 
                         });
                         this.on('queuecomplete',function(){
                             this.removeAllFiles();
+                            scope.desc = '';
                             scope.getRepo();
                         });
                     }
