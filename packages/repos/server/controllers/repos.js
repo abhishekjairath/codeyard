@@ -13,7 +13,10 @@ var mongoose = require('mongoose'),
   fs = require('fs'),
   fse = require('fs.extra'),
   makeslug = require('slug'),
-  repoPath = config.repoPath;
+  repoPath = config.repoPath,
+  pushCQueue = config.redis.pushCommits,
+  redis = require("redis"),
+  client = redis.createClient();
 
 exports.downloadRepo = function(req,res){
     var repoSlug = req.params.reposlug;
@@ -65,6 +68,79 @@ var createSlug = function(type,repoName,callback){
 		callback(newslug); 
 	else
 		callback(null);
+};
+
+var processCommit = function(files,path,queueString,cb){
+	var result = {},
+		i = 0,
+		filePath = '',
+		file = {};
+
+	async.eachSeries(files,function(item,iterate){
+		fs.readFile(item.path,function(err,data){
+			file = {
+				'extension' : item.extension,
+			    'name' : item.originalname,
+				'path' : path[i] 
+			};
+			filePath = config.repoPath+path[i]+'/temp_'+item.originalname;
+			if(err){
+				console.log(err);
+				iterate();
+			}
+			else{
+				fs.writeFile(filePath,data,function(error,result){
+					if(error){
+						console.log(error);
+						iterate();
+					}
+					else{
+						Repo.findOne({slug:queueString.reposlug,'files.path':path[i]+'/'+item.originalname},function(error1,response1){
+							if(error1){
+								console.log(error1);
+							}
+							else if(response1){
+								console.log(response1);
+								file.isnew = false;
+							}
+							else{
+								file.isnew = true;
+							}
+							i = i+1;
+							queueString.files.push(file);				
+							iterate();			
+						});			
+					}
+				});
+			}
+		})},function(err){
+			if(err){	
+				result = {
+					'error':1,
+					'error_msg':'Error while processing files'
+				};
+				cb(err,result);
+			}
+			else{	
+				queueString = JSON.stringify(queueString);
+				client.rpush(pushCQueue,queueString,function(redis_err,redis_res){
+					if(redis_err){
+						console.log(redis_err);
+						result = {
+							'error':1,
+							'error_msg':'Error while adding in the queue'
+						};
+					}
+					else{
+						result = {
+							'error':0,
+							'error_msg':'Files committed successfully'
+						};
+					}
+					cb(null,result);
+				});
+			}
+		});
 };
 
 
@@ -332,27 +408,41 @@ exports.createFolder = function(req,res){
 exports.uploadFile = function(req,res){
 	var paths = [],
 		files = [],
-		repoSlug = req.body.repoSlug,
 		isArray,
+		queueString = {
+			'reposlug' : req.body.repoSlug,
+			'repoid' : req.body.repoid,
+			'desc' : req.body.desc,
+			'userid' : req.user._id,
+			'username' : req.user.username,
+			'files' : []
+		},
 		result = {};
 	Object.keys(req.files).forEach(function (key) {
         files.push(req.files[key]);
         });
 	isArray = Array.isArray(req.body.path);
-	console.log(isArray);
 	if(isArray)
 		paths = req.body.path;
 	else
 		paths.push(req.body.path);
-	processFiles(files,paths,repoSlug, function(err,response){
+	
+	/*processFiles(files,paths,repoSlug, function(err,response){
 		if(err)
 			console.log(err);
 		res.jsonp(response);
+	});*/
+	
+	processCommit(files,paths,queueString,function(err,response){
+		if(err){
+			console.log(err);
+			res.send(200,'There was an error while processing commits');
+		}
+		res.jsonp(response);
 	});
-
 };
 
-var processFiles = function(files,path,repoSlug,cb){
+/*var processFiles = function(files,path,repoSlug,cb){
 	var result = {},
 		i = 0,
 		extension = '',
@@ -402,7 +492,7 @@ var processFiles = function(files,path,repoSlug,cb){
 				cb(null,result);
 			}
 		});
-};
+};*/
 
 exports.deleteFile = function(req,res){
 	var fileId = req.body.fileId,
@@ -418,7 +508,7 @@ exports.deleteFile = function(req,res){
 				res.jsonp(result);
 			}
 			else{
-				Repo.findOneAndUpdate({'files.path':filePath},{updated:Date.now(),$pull:{files:{path:filePath}}},function(error,response){
+				Repo.findOneAndUpdate({'files._id':fileId},{updated:Date.now(),$pull:{files:{path:filePath}}},function(error,response){
 					if(error){
 						console.log(error);
 						result = {

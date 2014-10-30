@@ -4,12 +4,12 @@
  * Module dependencies.
  */
 var mongoose = require('mongoose'),
-  User = mongoose.model('User'),
-  Repo = mongoose.model('Repo'),
-  Commit = mongoose.model('Commit'),
-  async = require('async'),
-  config = require('meanio').loadConfig(),
-  repoPath = config.repoPath;
+  	User = mongoose.model('User'),
+  	Repo = mongoose.model('Repo'),
+  	Commit = mongoose.model('Commit'),
+  	async = require('async'),
+  	config = require('meanio').loadConfig(),
+  	repoPath = config.repoPath;
 
 exports.userCommits = function (req,res){
 	var username = req.params.username,
@@ -85,10 +85,10 @@ exports.createCommit = function(req,res){
 
 
 	commit.desc = req.body.desc;
-	commit.contributor.user_id = req.user._id;
+	commit.contributor.userid = req.user._id;
 	commit.contributor.username = req.user.username;
-	commit.repo.repo_slug = 'lana-ki-repo';
-	commit.repo.repo_id = '544f71af37330eb531d917cb';
+	commit.repo.reposlug = 'lana-ki-repo';
+	commit.repo.repoid = '544f71af37330eb531d917cb';
 
 	async.series([
 		function(callback){

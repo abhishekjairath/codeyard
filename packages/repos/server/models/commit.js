@@ -31,14 +31,14 @@ var CommitSchema = new Schema({
   },
   contributor:{
     username: String,
-    user_id:{
+    userid:{
       type: Schema.ObjectId,
       ref: 'User'
     }
   },
   repo:{
-    repo_slug:String,
-    repo_id:{
+    reposlug:String,
+    repoid:{
       type: Schema.ObjectId,
       ref: 'Repo'
     }
