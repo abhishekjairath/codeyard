@@ -15,8 +15,9 @@ def replace(oldfile,newfile):
 	os.remove(newfile)
 
 def func(name,path,isnew,extension,db,repoid):
-	file_dir="//home/aman/project/codeyard/commit/file_system/repos/"
+	file_dir="//home/abhishek/Documents/repos/"
 	d={}
+	path=path+"/"
 	addedfinal=[]
 	deletedfinal=[]
 	delete_add_then=[]
@@ -66,6 +67,9 @@ def func(name,path,isnew,extension,db,repoid):
 		deletedfinal=list(set(deleted)-set(delete_add_then))
 
 		replace(file_dir+path+name,file_dir+path+"temp_"+name)
+		filesize=os.path.getsize(file_dir+path+name)
+		db.repos.update({'_id':ObjectId(repoid),'files.path':path+name},{'$set':{'files.$.size':filesize}})
+
 
 	else:
 		o=open(file_dir+path+"temp_"+name,'r')
@@ -78,9 +82,9 @@ def func(name,path,isnew,extension,db,repoid):
 			file2dec1[addedfinal[i]]=k
 			k=k+1
 			i=i+1
-		filesize = os.path.getsize(file_dir+path+name);
-		fileupdate={'path':path,'tag':extension,'name':name,'size':filesize}
-		db.repo.update({'_id':ObjectId(repoid)},{'$push':{'files':fileupdate}})
+		filesize = os.path.getsize(file_dir+path+name)
+		fileupdate={'path':path+name,'tag':extension,'name':name,'size':filesize,'slug':None,'_id':ObjectId()}
+		db.repos.update({'_id':ObjectId(repoid)},{'$push':{'files':fileupdate}})
 
 	
 	if  len(addedfinal)>0:
@@ -113,7 +117,7 @@ def Main():
 
 	client = MongoClient('127.0.0.1',27017)
 	
-	db = client['new']
+	db = client['mean-dev1']
 	
 	listen = HotQueue("cpush",serializer=json)
 
@@ -123,7 +127,7 @@ def Main():
 	for a in listen.consume():
 		files = []
 
-		for item in a['file']:
+		for item in a['files']:
 			files.append(func(item['name'],item['path'],item['isnew'],item['extension'],db,a['repoid']))
 		
 		commits = {
@@ -135,11 +139,11 @@ def Main():
 					'user'     : {'id':ObjectId(a['userid']),'username':a['username']}
 				}
 
-		commitid = db.commit.insert(commits)
+		commitid = db.commits.insert(commits)
 		
-		db.repo.update({'_id':commits['repo']['id']},{'$push':{'commits':commitid}})
+		db.repos.update({'_id':commits['repo']['id']},{'$push':{'commits':commitid}})
 		
-		db.user.update({'_id':commits['user']['id']},{'$push':{'commits':commitid}})
+		db.users.update({'_id':commits['user']['id']},{'$push':{'commits':commitid}})
 		
 		responseobj= {'commitid':str(commitid),'userid':str(commits['user']['id'])}
 
@@ -149,4 +153,3 @@ def Main():
 
 if __name__=='__main__':
 	Main()
-

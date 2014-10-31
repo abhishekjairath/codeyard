@@ -13,8 +13,8 @@ var System = new Module('system');
  * All MEAN packages require registration
  * Dependency injection is used to define required modules
  */
-System.register(function(app, auth, database) {
-  
+System.register(function(app, auth, database, io) {
+
   System.menus.add({
     title: 'Dashboard',
     link: 'home',
@@ -22,7 +22,7 @@ System.register(function(app, auth, database) {
     menu: 'main'
   });
   //We enable routing. By default the Package Object is passed to the routes
-  System.routes(app, auth, database);
+  System.routes(app, auth, database, io);
 
   System.aggregateAsset('css', 'common.css');
 

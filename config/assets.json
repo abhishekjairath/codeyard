@@ -16,7 +16,9 @@
         "bower_components/angular-bootstrap/ui-bootstrap.js",
         "bower_components/angular-bootstrap/ui-bootstrap-tpls.js",
         "bower_components/dropzone/downloads/dropzone.js",
-        "bower_components/typeahead.js/dist/typeahead.bundle.min.js"
+        "bower_components/typeahead.js/dist/typeahead.bundle.min.js",
+        "bower_components/socket.io/socket.io.js",
+        "bower_components/angular-socket-io/socket.min.js"
       ]
     }
   }
