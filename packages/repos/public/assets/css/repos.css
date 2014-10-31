@@ -148,3 +148,14 @@ span.twitter-typeahead {
     color:#eeeeee;
     transition:background-color,color 0.3s ease;
 }
+
+.glyphicon-cloud-download{
+  font-size: 24px;
+  color: #333;
+  margin-right: 13px;
+}
+
+.collaborator{
+  overflow-y:auto;
+  height:220px;
+}
