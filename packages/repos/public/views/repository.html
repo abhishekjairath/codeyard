@@ -6,6 +6,9 @@
                     <span class="glyphicon glyphicon-lock" title="Private" data-ng-show="!repo.ispublic"></span> 
     	        	{{global.user.username}} / {{repo.slug}}
     	        	<span class="glyphicon glyphicon-trash pull-right link" title="Delete this repo" ng-click="delRepo=true;"></span>
+                    <a class="pull-right" href="/repos/download/{{repo.slug}}">
+                            <span class="glyphicon glyphicon-cloud-download" title="Download this Repo"></span>
+                    </a>
                     <div data-ng-show="delRepo;" class="alert alert-danger editDesc">
                         <strong>Are you sure you want to delete this repository ?</strong>
                         <span class="glyphicon glyphicon-ok-circle link" data-ng-click="deleteRepo(repo.slug);"></span>
@@ -72,7 +75,7 @@
                         <form class="dropzone" drop-zone id="file-dropzone">
                             <input type="hidden" name="repoSlug" value="{{repo.slug}}"/>
                             <input type="hidden" name="repoid" value="{{repo._id}}"/>
-                            <div class="col-md-2 pull-right upload-btn link" id="upload" >Commit</div>
+                            <button class="col-md-2 pull-right btn btn-default link" id="upload" >Commit</button>
                             <div class="col-md-10">
                                 <input type="text" name="desc" class="form-control" placeholder="Description" ng-model="desc"/>
                             </div>
@@ -109,18 +112,13 @@
         		<strong>Project Collaborators</strong>
         		<span class="glyphicon glyphicon-plus pull-right link" title="Add" data-ng-click="addteam=true;"></span>
         	</div>
-        	    <ul class="list-group">
+        	    <ul class="list-group collaborator">
         	    	<li class="list-group-item" data-ng-show="addteam">
                         <user-suggestions repo-id="repo._id"></user-suggestions>
         	        </li>
                     <li class="list-group-item" ng-repeat="contributor in repo.contributors">{{contributor.name}}</li>
                 </ul>
             </div>
-            <a href="/repos/download/{{repo.slug}}">
-            <div class="upload-btn">
-                <span class="glyphicon glyphicon-download"></span>Download
-            </div>
-            </a>
         </div>
     </div>
 </section>
