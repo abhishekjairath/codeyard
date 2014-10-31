@@ -11,7 +11,7 @@ var mongoose = require('mongoose'),
   	config = require('meanio').loadConfig(),
   	repoPath = config.repoPath;
 
-exports.userCommits = function (req,res){
+exports.userCommits = function (req,res,io,cb){
 	var username = req.params.username,
 		result = {};
 
@@ -30,7 +30,7 @@ exports.userCommits = function (req,res){
 				'response':response
 			};
 		}
-		res.jsonp(result);
+		cb(null,result);
 	});
 };
 

@@ -16,4 +16,9 @@ angular.module('mean.system').factory('Global', [
     }
     return _this._data;
   }
-]);
+])
+.factory('mySocket', function (socketFactory) {
+  var mySocket = socketFactory();
+  mySocket.forward('userCommit');
+  return socketFactory();
+});

@@ -17,7 +17,7 @@ for (var index in window.modules) {
 }
 
 // Default modules
-var modules = ['ngCookies', 'ngResource', 'ui.bootstrap', 'ui.router'];
+var modules = ['ngCookies', 'ngResource', 'ui.bootstrap', 'ui.router', 'btford.socket-io'];
 modules = modules.concat(packageModules);
 
 // Combined modules
