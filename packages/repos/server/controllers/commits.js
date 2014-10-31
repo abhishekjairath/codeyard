@@ -87,8 +87,8 @@ exports.createCommit = function(req,res){
 	commit.desc = req.body.desc;
 	commit.contributor.userid = req.user._id;
 	commit.contributor.username = req.user.username;
-	commit.repo.reposlug = 'lana-ki-repo';
-	commit.repo.repoid = '544f71af37330eb531d917cb';
+	commit.repo.reposlug = req.body.reposlug;
+	commit.repo.repoid = req.body.repoid;
 
 	async.series([
 		function(callback){

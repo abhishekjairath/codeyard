@@ -101,10 +101,10 @@ var processCommit = function(files,path,queueString,cb){
 							}
 							else if(response1){
 								console.log(response1);
-								file.isnew = false;
+								file.isnew = "false";
 							}
 							else{
-								file.isnew = true;
+								file.isnew = "true";
 							}
 							i = i+1;
 							queueString.files.push(file);				
@@ -412,12 +412,14 @@ exports.uploadFile = function(req,res){
 		queueString = {
 			'reposlug' : req.body.repoSlug,
 			'repoid' : req.body.repoid,
-			'desc' : req.body.desc,
+-			'desc' : req.body.desc,
 			'userid' : req.user._id,
 			'username' : req.user.username,
 			'files' : []
 		},
 		result = {};
+
+		console.log(queueString);
 	Object.keys(req.files).forEach(function (key) {
         files.push(req.files[key]);
         });
