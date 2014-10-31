@@ -61,10 +61,10 @@
                       </span>
                       <span class="badge" data-ng-show="item.owner === global.user._id">Owner</span>
                       <span class="badge" data-ng-show="!(item.owner=== global.user._id)">Collaborator</span>
-                      <h2 class="list-group-item-heading">
+                      <h3 class="list-group-item-heading">
                         {{item.slug}}
-                      </h2><br>
-                      <p class="list-group-item-text">{{item.desc}}</p><br>
+                      </h3><br>
+                      <p class="list-group-item-text">{{item.desc}}</p>
                       Last Updated On <strong>{{item.updated| date:'MMM d, y h:mm a'}}</strong><br><br>
                     </a>
                 </div>

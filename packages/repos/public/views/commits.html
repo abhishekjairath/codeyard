@@ -1,3 +1,13 @@
 <div data-ng-init="menu('mycommits');">
-<h2>404 - Page Not Found</h2>
+<div class="list-group">
+<div ui-view>
+	<li class="list-group-item">
+		<span class="badge">Oct 29, 2014 7:30 PM</span>
+		<a ui-sref="repos.commits.view({id:'d4998804d'})">
+			<h4 class="list-group-item-heading">Update Repo</h4>
+		</a>
+		<span class="link"><span class="glyphicon glyphicon-link"></span>d4998804d</span>
+	</li>
+</div>
+</div>
 </div>

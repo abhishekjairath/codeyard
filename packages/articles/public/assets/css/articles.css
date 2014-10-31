@@ -15,5 +15,5 @@ ul.articles li:not(:last-child) {
 }
 .article-content{
 	font-family: Century Gothic,Calibri;
-	font-size: 18px;
+	font-size: medium;
 }
