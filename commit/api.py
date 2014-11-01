@@ -27,7 +27,7 @@ def func(name,path,isnew,extension,db,repoid):
 	file2dec1={}
 	file2dec2={}
 	updations=[]
-	if isnew == "False":
+	if isnew == "false":
 		file1=open(file_dir+path+name,'r')
 		file2=open(file_dir+path+"temp_"+name,'r')
 		read1=file1.readlines()
