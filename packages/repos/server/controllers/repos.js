@@ -405,6 +405,43 @@ exports.createFolder = function(req,res){
 		});	
 };
 
+exports.deleteFolder = function(req,res){
+	var result = {},
+		pathInRepo = req.body.path,
+		reposlug = req.body.reposlug,  
+		folderslug = req.body.folderslug,
+		re = new RegExp(pathInRepo);	
+		fse.rmrf(repoPath+pathInRepo,function(err,response){
+			if(err){
+				console.log(err);
+				result = {
+					'error':1,
+					'error_msg':'There was an error while deleting the folder in the repo'+ folderName
+				};
+				res.jsonp(result);
+			}
+			else{
+				Repo.findOneAndUpdate({slug:reposlug},{updated:Date.now(),$pull:{files:{path:re}}},function(error,response1){
+					if(error){
+						console.log(error);
+						result = {
+							'error':1,
+							'error_msg':'Error while deleting the sub folder to database.'
+						};
+					}
+					else{
+						result = {
+							'error':0,
+							'error_msg':'Folder created successfully',
+							'response':response1
+						};
+					}
+					res.jsonp(result);
+				});
+			}
+		});
+}
+
 exports.uploadFile = function(req,res){
 	var paths = [],
 		files = [],
@@ -412,14 +449,13 @@ exports.uploadFile = function(req,res){
 		queueString = {
 			'reposlug' : req.body.repoSlug,
 			'repoid' : req.body.repoid,
--			'desc' : req.body.desc,
+			'desc' : req.body.desc,
 			'userid' : req.user._id,
 			'username' : req.user.username,
 			'files' : []
 		},
 		result = {};
 
-		console.log(queueString);
 	Object.keys(req.files).forEach(function (key) {
         files.push(req.files[key]);
         });
