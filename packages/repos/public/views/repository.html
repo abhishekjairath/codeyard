@@ -61,12 +61,13 @@
                                 <span ng-show="file.tag=='folder'">
                                     <span class="glyphicon glyphicon-folder-close"></span>
                                     <a href="" ng-click="pathFromView(file.slug);">{{file.name}}</a>
+                                    <span class="glyphicon glyphicon-trash pull-right link" title="Delete folder" data-ng-click="deleteFolder(file.path,repo.slug,file.slug)"></span>
                                 </span>
                                 <span ng-show="file.tag!='folder'">
                                     <span class="glyphicon glyphicon-file"></span>
                                     <a href="" ng-click="viewFile(file);">{{file.name}}</a>
+                                    <span class="glyphicon glyphicon-trash pull-right link" title="Delete file" data-ng-click="deleteFile(file._id,file.path)"></span>
                                 </span>
-                                <span class="glyphicon glyphicon-trash pull-right link" title="Delete file" data-ng-click="deleteFile(file._id,file.path)"></span>
                             </li> 
                             <li class="list-group-item list-group-item-info" ng-if="files.length==0">
                                 Folder Empty

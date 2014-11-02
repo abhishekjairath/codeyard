@@ -130,6 +130,20 @@ angular.module('mean.repos').controller('ReposController', ['$scope', 'Global', 
         }
     };
 
+    $scope.deleteFolder = function(path,reposlug,folderslug){
+        var folder = {
+            path: path,
+            reposlug: reposlug,
+            folderslug: folderslug 
+        };
+        Repos.deleteFolder(folder).success(function(data){
+            $scope.getRepo();
+        }).error(function(data){
+            $scope.error = true;
+            $scope.error_msg = "Could not delete the folder";
+        });
+    }
+
     $scope.pathFromCrumb = function(folder){
         for (var i = $scope.currentPath.length - 1; i >= 0; i--) {
             if($scope.currentPath[i]!==folder)

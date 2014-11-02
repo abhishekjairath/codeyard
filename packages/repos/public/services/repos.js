@@ -32,6 +32,10 @@ angular.module('mean.repos').factory('Repos', ['$http',
       return $http.post('/repos/folder',folder);
     }
 
+    factory.deleteFolder = function(folder){
+      return $http.post('/repos/folder/delete',folder);
+    }
+
     factory.deleteRepo = function(reposlug){
       return $http.delete('/repos/'+reposlug);
     }
