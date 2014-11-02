@@ -42,6 +42,7 @@ module.exports = function(Repos, app, auth, database) {
 
   /************************************/
   app.post('/repos/folder', repos.createFolder);
+  app.post('/repos/folder/delete', repos.deleteFolder);
 
   app.post('/repos/repo',repos.uploadRepo);
   app.post('/repos/:repoid/collaborators', repos.addCollab);
