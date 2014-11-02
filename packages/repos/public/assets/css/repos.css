@@ -159,3 +159,24 @@ span.twitter-typeahead {
   overflow-y:auto;
   height:220px;
 }
+
+.commit h3{
+  font-family: Calibri;
+  padding-left: 25px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.commit-view-body{
+  overflow-x:auto;
+  font-family: Consolas,Menlo,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace,serif;
+}
+.commit-view-line-num{
+  text-align: right;
+  color: rgb(225,51,26);
+}
+.commit-view-lines{
+  padding-left: 5px;
+}
+
+.commit-view-lines .glyphicon-plus{color:rgb(124,124,124);font-size: 12px;}
+.commit-view-lines .glyphicon-minus{color:rgb(124,124,124);font-size: 12px;}
