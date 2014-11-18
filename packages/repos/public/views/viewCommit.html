@@ -1,1 +1,28 @@
-<h1>View Commit</h1>
+<section data-ng-controller="CommitController">
+<div data-ng-init="viewCommit();" class="commit">
+   <h3 class="bg-info">{{commit.desc}}</h3>
+   <h6><span class="glyphicon glyphicon-user"></span> {{commit.user.username}}</h6>
+   <h6><span class="glyphicon glyphicon-align-justify"></span> {{commit.repo.slug}}</h6>
+   <h6><span class="glyphicon glyphicon-time"/></span> {{commit.created | date:'medium'}}</h6>
+   <blockquote>
+       Showing <span class="pink">{{commit.changes.length}} changed files</span> with {{additions}} additions and {{deletions}} deletions.
+   </blockquote>
+    <div class="panel panel-default" data-ng-repeat="file in commit.changes">
+       	    <div class="panel-heading">
+       		    <div class="panel-title"><span class="glyphicon glyphicon-file"></span>{{file.file}}</div>
+       	    </div>
+       	    <div class="commit-view-body">
+       	    	<div data-ng-repeat="update in file.updations">
+       	            <span class="col-md-1 commit-view-line-num">{{update.line}}</span>
+       	            <div class="col-md-11">
+       	            <span class="commit-view-lines bg-success" data-ng-if="update.content_now!='null'">
+       	            	<span class="glyphicon glyphicon-plus"></span>  {{update.content_now}}<br>
+       	            </span>
+       	            <span class="commit-view-lines bg-danger" data-ng-if="update.content_then!='null'">
+       	            	<span class="glyphicon glyphicon-minus"></span>  {{update.content_then}}<br>
+       	            </span>
+       	            </div>
+       	        </div>
+       	    </div>
+    </div>
+</section>

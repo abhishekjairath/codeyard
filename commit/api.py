@@ -32,6 +32,8 @@ def func(name,path,isnew,extension,db,repoid):
 		file2=open(file_dir+path+"temp_"+name,'r')
 		read1=file1.readlines()
 		read2=file2.readlines()
+		file1.close()
+		file2.close()
 		i=j=0
 		k=1
 		while i<len(read1):
@@ -74,6 +76,7 @@ def func(name,path,isnew,extension,db,repoid):
 	else:
 		o=open(file_dir+path+"temp_"+name,'r')
 		addedfinal=o.readlines()
+		o.close()
 		os.rename(file_dir+path+"temp_"+name,file_dir+path+name)	
 		i=0
 		k=1

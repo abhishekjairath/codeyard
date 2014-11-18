@@ -164,7 +164,7 @@ angular.module('mean.repos').controller('ReposController', ['$scope', 'Global', 
         var path = (file.path).replace(/\//g,'_');
         Repos.getFile(path).success(function(res){
             if(res.data){
-                $scope.openedFile = file.name+'.'+file.tag;
+                $scope.openedFile = file.name;
                 $scope.fileSize = file.size/1000+' KB';
                 document.getElementById('content').innerText = '';
                 document.getElementById('lines').innerText = '';
@@ -224,12 +224,12 @@ angular.module('mean.repos').controller('ReposController', ['$scope', 'Global', 
         });
     };
 
-}]).controller('CommitsController', ['$scope', 'Global', 'Repos',
-  function($scope, Global, Repos) {
-
+}]).controller('CommitController', ['$scope','$stateParams', 'Global', 'Repos',
+  function($scope, $stateParams, Global, Repos) {
+    
     $scope.userCommits = function(){
-        userCommits($scope.global.user._id,function(commits){
-            $scope.commits = commits;
+        Repos.userCommits($scope.global.user.username).success(function(data){
+            $scope.commits = data.response.commits;
         }).error(function(data){
             $scope.error = true;
             $scope.error_msg = "Unable to get user commits.";
@@ -237,11 +237,38 @@ angular.module('mean.repos').controller('ReposController', ['$scope', 'Global', 
     };
 
     $scope.repoCommits = function(reposlug){
-        repoCommits(reposlug,function(commits){
-            $scope.commits = commits;
+
+        Repos.repoCommits(reposlug).success(function(data){
+            $scope.commits = data.response[0].commits;
         }).error(function(data){
             $scope.error = true;
             $scope.error_msg = "Unable to get repo commits.";
+        });
+    };
+
+    $scope.additions=0;
+    $scope.deletions=0;
+    
+    $scope.viewCommit = function(){
+        Repos.viewCommit($stateParams.id).success(function(data){
+            $scope.commit = data.response;
+            console.log($scope.commit.changes);
+            for(var i=0;i<$scope.commit.changes.length;i++){
+                for(var j=0;j<$scope.commit.changes[i].updations.length;j++){
+                    if($scope.commit.changes[i].updations[j].status==0){
+                        $scope.additions++;
+                        
+                    }else if($scope.commit.changes[i].updations[j].status==1){
+                        $scope.deletions++;
+                        
+                    }else if($scope.commit.changes[i].updations[j].status==2){
+                        $scope.additions++;
+                    }
+                }
+            }
+        }).error(function(data){
+            $scope.error = true;
+            $scope.error_msg = "Could load the commit.";
         });
     };
 

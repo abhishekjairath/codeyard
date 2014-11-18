@@ -11,7 +11,7 @@
         <h5><span class="glyphicon glyphicon-time"></span> Joined On {{global.user.me.created|date:'mediumDate'}}</h5>
         <div class="division"></div>
         Total Repos:<h3>{{repos.length}}</h3>
-        Total Commits:<h3>0</h3>
+        Total Commits:<h3>{{global.user.me.commits}}</h3>
         <div class="division"></div>
   </div>
   <br>
@@ -30,7 +30,6 @@
             <a ui-sref="repos.articles">Articles</a>
           </li>
       </ul>
-      <br>
       <div ui-view>
         <div data-ng-init="menu('myrepos');">
           <div class="filters" data-ng-init="filter('all');">

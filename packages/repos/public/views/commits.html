@@ -1,13 +1,14 @@
-<div data-ng-init="menu('mycommits');">
-<div class="list-group">
+<div data-ng-init="menu('mycommits');"></div>
+<section data-ng-controller="CommitController">
+<div class="list-group" data-ng-init="userCommits();">
 <div ui-view>
-	<li class="list-group-item">
-		<span class="badge">Oct 29, 2014 7:30 PM</span>
-		<a ui-sref="repos.commits.view({id:'d4998804d'})">
-			<h4 class="list-group-item-heading">Update Repo</h4>
+	<li class="list-group-item" data-ng-repeat="commit in commits|orderBy:commit.created">
+		<span class="badge">{{commit.created | date:'medium'}}</span>
+		<a ui-sref="repos.commits.view({id:commit._id})">
+			<h4 class="list-group-item-heading">{{commit.desc}}</h4>
 		</a>
-		<span class="link"><span class="glyphicon glyphicon-link"></span>d4998804d</span>
+		<span><span class="glyphicon glyphicon-align-justify"></span> {{commit.repo.slug}}</span>
 	</li>
 </div>
 </div>
-</div>
+</section>

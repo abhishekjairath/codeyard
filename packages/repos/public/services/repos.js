@@ -52,8 +52,12 @@ angular.module('mean.repos').factory('Repos', ['$http',
       return $http.get("/"+username+"/commits");
     }
 
-    factory.repoCommits = function(){
+    factory.repoCommits = function(reposlug){
       return $http.get("/repos/"+reposlug+"/commits");
+    }
+
+    factory.viewCommit =function(id){
+      return $http.get("/commits/"+id);
     }
     return factory; 
   }
