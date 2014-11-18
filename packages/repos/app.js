@@ -11,10 +11,10 @@ var Repos = new Module('repos');
  * All MEAN packages require registration
  * Dependency injection is used to define required modules
  */
-Repos.register(function(app, auth, database, io) {
+Repos.register(function(app, auth, database) {
 
   //We enable routing. By default the Package Object is passed to the routes
-  Repos.routes(app, auth, database,io);
+  Repos.routes(app, auth, database);
 
   //We are adding a link to the main menu for all authenticated users
   Repos.menus.add({
