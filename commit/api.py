@@ -1,9 +1,14 @@
+#!/usr/bin/python
+
 import os
 from pymongo import MongoClient 
 from hotqueue import HotQueue
 import json
 import datetime
 from bson.objectid import ObjectId
+import collections
+import difflib
+import threading
 
 def replace(oldfile,newfile):
 	f=open(oldfile,'w')
@@ -14,18 +19,12 @@ def replace(oldfile,newfile):
 	g.close()
 	os.remove(newfile)
 
-def func(name,path,isnew,extension,db,repoid):
-	file_dir="//home/abhishek/Documents/repos/"
+def func(name,path,isnew,extension,db,repoid,file_dir):
 	d={}
 	path=path+"/"
-	addedfinal=[]
-	deletedfinal=[]
-	delete_add_then=[]
-	delete_add_now=[]
-	file1dec1={}
-	file1dec2={}
-	file2dec1={}
-	file2dec2={}
+	addedfinal={}
+	deletedfinal={}
+	adddelete={}
 	updations=[]
 	if isnew == "false":
 		file1=open(file_dir+path+name,'r')
@@ -34,40 +33,35 @@ def func(name,path,isnew,extension,db,repoid):
 		read2=file2.readlines()
 		file1.close()
 		file2.close()
-		i=j=0
-		k=1
-		while i<len(read1):
-		#read1[i]=read1[i].strip()
-			file1dec1[read1[i]]=k
-			file1dec2[k]=read1[i]
-			k=k+1
-			i=i+1
-		k=1
-		while j<len(read2):
-			#read2[j]=read2[j].strip()
-			file2dec1[read2[j]]=k
-			file2dec2[k]=read2[j]
-			k=k+1
-			j=j+1
-		add_deletedlast=[]
-		added=list(set(read2)-set(read1))
-		deleted=list(set(read1)-set(read2))
-		m=0
-		delete_add_then=[]
-		delete_add_now=[]
-		while m<len(added):
-			lineno=file2dec1[added[m]]
-			check_name=file1dec2[lineno]
-			if(check_name in deleted):
-				b={}
-				b={'content_then':check_name,'content_now':added[m],'line':lineno,'status':2}
-				updations.append(b)
-				delete_add_then.append(check_name)
-				delete_add_now.append(added[m])
-			m=m+1
-		addedfinal=list(set(added)-set(delete_add_now))
-		deletedfinal=list(set(deleted)-set(delete_add_then))
-
+		change=difflib.ndiff(read1,read2)
+		changes=[]
+		for line in change:
+			changes.append(line)
+		#print changes
+		l=0
+		i=0
+		j=0
+		while l<len(changes):
+			if changes[l][0]=='+':
+				i=i+1
+				addedfinal={'content_then':None,'content_now':changes[l][2:],'line_then':None,'line_now':i,'status':0}
+				updations.append(addedfinal)
+			elif changes[l][0]=='-':
+				if (l<len(changes)+2)&(changes[l+2][0]=='?'):
+					i=i+1
+					j=j+1
+					adddelete={'content_then':changes[l][2:],'content_now':changes[l+1][2:],'line_then':j,'line_now':i,'status':2}
+					updations.append(adddelete)
+					l=l+2
+				else:
+					j=j+1
+					deletedfinal={'content_then':changes[l][2:],'content_now':None,'line_then':j,'line_now':None,'status':1}
+					updations.append(deletedfinal)	
+			else:
+				i=i+1
+				j=j+1	
+			l=l+1
+		
 		replace(file_dir+path+name,file_dir+path+"temp_"+name)
 		filesize=os.path.getsize(file_dir+path+name)
 		db.repos.update({'_id':ObjectId(repoid),'files.path':path+name},{'$set':{'files.$.size':filesize}})
@@ -79,29 +73,16 @@ def func(name,path,isnew,extension,db,repoid):
 		o.close()
 		os.rename(file_dir+path+"temp_"+name,file_dir+path+name)	
 		i=0
-		k=1
 		while i<len(addedfinal):
-		#read1[i]=read1[i].strip()
-			file2dec1[addedfinal[i]]=k
-			k=k+1
+			b={}
+			b={'content_then':None,'content_now':addedfinal[i],'line_then':None,'line_now':i+1,'status':0}
+			updations.append(b)
 			i=i+1
+
 		filesize = os.path.getsize(file_dir+path+name)
 		fileupdate={'path':path+name,'tag':extension,'name':name,'size':filesize,'slug':None,'_id':ObjectId()}
 		db.repos.update({'_id':ObjectId(repoid)},{'$push':{'files':fileupdate}})
 
-	
-	if  len(addedfinal)>0:
-		for item in addedfinal:
-			b={}
-			b={'content_then':'null','content_now':item,'line':file2dec1[item],'status':0}
-			updations.append(b)
-	
-	if len(deletedfinal)>0:
-		for item in deletedfinal:
-			b={}
-			b={'content_then':item,'content_now':'null','line':file1dec1[item],'status':1}
-			updations.append(b)
-	
 	d['file']=name
 	d['updations']=updations
 	
@@ -111,27 +92,41 @@ def func(name,path,isnew,extension,db,repoid):
 
 
 
-#a = '{"file":[{"isnew":"False","name":"tes4.c","path":"Realtime/","extension":"c"}],"desc":"abcd","repoid":"54524083725c58f9d20eb77a","reposlug":"Realtime","userid":"54524059725c58f9d20eb779","username":"aman"}'
+#a = '{"file":[{"isnew":"true","name":"tes4.c","path":"Realtime","extension":"c"}],"desc":"abcd","repoid":"54548e99cf45ddfac9d2579a","reposlug":"Realtime","userid":"546dd1f46e8610418688fd26","username":"aman"}'
 
 
 	
+
 
 def Main():
 
-	client = MongoClient('127.0.0.1',27017)
-	
-	db = client['mean-dev1']
-	
-	listen = HotQueue("cpush",serializer=json)
 
-	response = HotQueue("cpull",serializer=json)
+	print "\nredis-listener started "
 
+	setupfile=open("config.json",'r')
+	info=setupfile.read()
+	info=json.loads(info)
+	HOST=info['mongohost']
+	PORT=info['port']
+	DB_NAME=info['database_name']
+	LISTENER_QUEUE=info['listener_queue']
+	RESPONSE_QUEUE=info['response_queue']
+
+	file_dir=info['repo_directory']
+	client = MongoClient(HOST,PORT)
 	
+	db = client[DB_NAME]
+	
+	listen = HotQueue(LISTENER_QUEUE,serializer=json)
+
+	response = HotQueue(RESPONSE_QUEUE,serializer=json)
+
+
 	for a in listen.consume():
+		
 		files = []
-
-		for item in a['files']:
-			files.append(func(item['name'],item['path'],item['isnew'],item['extension'],db,a['repoid']))
+		for item in a['file']:
+			files.append(func(item['name'],item['path'],item['isnew'],item['extension'],db,a['repoid'],file_dir))
 		
 		commits = {
 					'changes'  : files,
@@ -153,6 +148,9 @@ def Main():
 		response.put(responseobj)
 		
 		print commits
+
+
+
 
 if __name__=='__main__':
 	Main()

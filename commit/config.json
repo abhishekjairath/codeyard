@@ -1,0 +1,8 @@
+{
+  "mongohost":"127.0.0.1",
+  "port":27017,
+  "database_name":"mean-dev1",
+  "listener_queue":"cpush",
+  "response_queue":"cpull",
+  "repo_directory":"//home/aman/project/aman/codeyard/commit/file_system/repos/"
+}
