@@ -1,6 +1,7 @@
 'use strict';
 
-var mean = require('meanio');
+var mean = require('meanio'),
+    index = require('../controllers/index');
 
 module.exports = function(System, app, auth, database) {
 
@@ -20,6 +21,8 @@ module.exports = function(System, app, auth, database) {
         })
       });
 
-      res.json(items);
+      if(req.user)
+        index.socketHandler(req);
+        res.json(items);
     });
 };

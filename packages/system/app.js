@@ -3,9 +3,10 @@
 /*
  * Defining the Package
  */
-var Module = require('meanio').Module,
-  favicon = require('serve-favicon'),
-  express = require('express');
+var mean = require('meanio'),
+    Module = mean.Module,
+    favicon = require('serve-favicon'),
+    express = require('express');
 
 var System = new Module('system');
 
@@ -13,7 +14,12 @@ var System = new Module('system');
  * All MEAN packages require registration
  * Dependency injection is used to define required modules
  */
-System.register(function(app, auth, database, io) {
+System.register(function(app, auth, database) {
+
+  mean.resolve(function(http){
+    var io = require('socket.io')(http);
+    mean.register('io',io);
+  });
 
   System.menus.add({
     title: 'Dashboard',
@@ -22,7 +28,7 @@ System.register(function(app, auth, database, io) {
     menu: 'main'
   });
   //We enable routing. By default the Package Object is passed to the routes
-  System.routes(app, auth, database, io);
+  System.routes(app, auth, database);
 
   System.aggregateAsset('css', 'common.css');
 

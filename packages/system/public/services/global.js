@@ -18,7 +18,7 @@ angular.module('mean.system').factory('Global', [
   }
 ])
 .factory('mySocket', function (socketFactory) {
-  var mySocket = socketFactory();
-  mySocket.forward('userCommit');
-  return socketFactory();
+    return socketFactory({
+      ioSocket: io('/cymain')
+    });
 });
