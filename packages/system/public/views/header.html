@@ -48,3 +48,9 @@
     </ul>
   </div>
 </div>
+
+<div class="notify" ng-show="notifContent" data-ng-controller="notificationController">
+  <div>{{notifContent}}<a ui-sref="repos.commits.view({id:commitId})">View</a>
+  <span class="glyphicon glyphicon-remove-circle" ng-click="closeNotif()"></span>
+  </div>
+</div>

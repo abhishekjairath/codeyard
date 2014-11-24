@@ -3,14 +3,7 @@
 var mean = require('meanio'),
     mongoose = require('mongoose'),
     User = mongoose.model('User'),
-    Repo = mongoose.model('Repo'),
-    redis = require("redis"),
-    client = redis.createClient(),
-    io = mean.resolve(function(io){return io;}),
-    cymain = io.of('/cymain');
-
-
-
+    Repo = mongoose.model('Repo');
 
 exports.render = function(req, res) {
 
@@ -49,21 +42,4 @@ exports.getStats = function(req,res){
       res.jsonp(stats = {users:userCount,repos:repoCount});
     });
   });
-};
-
-exports.socketHandler = function(req){
-  console.log("In the handler");
-  cymain.on('connection', function(socket){
-      console.log(socket.id);
-      console.log(req.user._id);
-      //console.log(io.sockets.connected[socket.id]);
-      client.set(req.user._id,socket.id,function(err){
-        if(err)
-          console.log(err);
-      });
-
-      socket.on('disconnect',function(){
-        console.log("Disconnected " + socket.id);
-      });
-    });
 };
