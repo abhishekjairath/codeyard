@@ -1,7 +1,6 @@
 'use strict';
 
-var mean = require('meanio'),
-    index = require('../controllers/index');
+var mean = require('meanio');
 
 module.exports = function(System, app, auth, database) {
 

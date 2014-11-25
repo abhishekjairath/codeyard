@@ -42,6 +42,10 @@ angular.module('mean.repos').config(['$stateProvider',
     .state('reponame.wiki', {
       url: '',
       templateUrl: 'repos/views/wiki.html'
+    })
+    .state('editor', {
+      url: '/edit/:repo/:file',
+      templateUrl: 'repos/views/editor.html'
     });
   }
 ]);

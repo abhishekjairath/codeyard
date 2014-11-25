@@ -1,0 +1,53 @@
+  <style>
+      #firepad{
+      	border: 1px solid rgb(200,200,200);
+      	height: 600px;
+      }
+      .chatbox{
+      	border:1px solid rgb(200,200,200);
+      	height: 450px;
+      	border-bottom: 0;
+      }
+      .row{
+      	margin-right: 3%;
+      	margin-left: 3%;
+      }
+  </style>
+<section data-ng-controller="EditorController">
+	<div class="row" data-ng-init="init()">
+	<div class="col-md-2">
+       <h3>Team</h3>
+       <div id="userlist"></div>
+	</div>
+	<div class="col-md-7">
+	    <h3>{{file}}</h3>
+        <div id="firepad"></div>
+	</div>
+    <div class="col-md-3">
+    	<h3>Discuss</h3>
+    	<div class="chatbox"></div>
+    	<div class="form-inline">
+            <div class="form-group">
+        	    <input type="text" class="form-control">
+        	    <button class="btn btn-default">Send</button>
+            </div>
+        </div>
+    </div>
+    </div>
+</section>
+
+    <br><br>
+<div class="footer">
+	<img class="col-md-4 footer-img" src="/theme/assets/img/woman_ninja_forg_pass.png"/>
+	<div class="col-md-8 team">
+		<div class="pull-right">
+			<span class="glyphicon glyphicon-copyright-mark"></span>Copyright 2014<br>
+			<div class="footer-logo">C<span class="glyphicon glyphicon-eye-open"></span>CODEYARD</div>
+		</div>
+	    Our Developer Team:
+	    <li>Aman Srivastava</li>
+	    <li>Abhishek Jairath</li>
+	    <li>Shubhank Srivastava</li>
+    </div>
+</div>
+

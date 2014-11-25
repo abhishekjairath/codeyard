@@ -2,7 +2,9 @@
   "core": {
     "css": {
       "bower_components/build/css/dist.min.css": [
-       "bower_components/dropzone/downloads/css/dropzone.css"
+       "bower_components/dropzone/downloads/css/dropzone.css",
+       "bower_components/codemirror/lib/codemirror.css",
+       "bower_components/firebase/firepad.css"
       ]
     },
     "js": {
@@ -18,7 +20,10 @@
         "bower_components/dropzone/downloads/dropzone.js",
         "bower_components/typeahead.js/dist/typeahead.bundle.min.js",
         "bower_components/socket.io/socket.io.js",
-        "bower_components/angular-socket-io/socket.min.js"
+        "bower_components/angular-socket-io/socket.min.js",
+        "bower_components/firebase/firebase.js",
+        "bower_components/codemirror/lib/codemirror.js",
+        "bower_components/firebase/firepad.js"
       ]
     }
   }

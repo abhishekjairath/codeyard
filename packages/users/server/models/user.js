@@ -39,6 +39,10 @@ var UserSchema = new Schema({
     type: String,
     required: true
   },
+  pic: {
+    type: String,
+    default: null
+  },
   created:{
     type: Date,
     default: Date.now

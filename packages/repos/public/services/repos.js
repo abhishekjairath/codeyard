@@ -60,8 +60,15 @@ angular.module('mean.repos').factory('Repos', ['$http',
       return $http.get("/repos/"+reposlug+"/commits");
     }
 
-    factory.viewCommit =function(id){
+    factory.viewCommit = function(id){
       return $http.get("/commits/"+id);
+    }
+
+    factory.uploadDp = function(payload){
+      return $http.post('/users/dp',payload,{
+            transformRequest: angular.identity,
+            headers: {'Content-Type': undefined}
+        });
     }
     return factory; 
   }

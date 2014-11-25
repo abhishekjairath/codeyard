@@ -16,6 +16,17 @@ angular.module('mean.repos').controller('ReposController', ['$scope', 'Global', 
         });
     }
 
+    document.getElementById('dp').addEventListener('change',function(){
+        var payload = new FormData();
+        payload.append('file',document.getElementById('dp').files[0]);
+        payload.append('username',$scope.global.user.username);
+        Repos.uploadDp(payload).success(function(data){
+            $scope.global.user.me.pic = data.msg;
+        }).error(function(){
+            $scope.global.user.me.pic = null;
+        });
+    });
+
     $scope.menu = function(tab){
         $scope.create_tab = (tab=='create')?'active':'';
         $scope.my_tab = (tab=='myrepos')?'active':'';
@@ -171,15 +182,17 @@ angular.module('mean.repos').controller('ReposController', ['$scope', 'Global', 
             }
         }
     };
-
+     
     $scope.viewFile = function(file){
         $scope.list = false;
         $scope.plusSignFolder = false;
         var path = (file.path).replace(/\//g,'_');
         Repos.getFile(path).success(function(res){
             if(res.data){
-                $scope.openedFile = file.name;
-                $scope.fileSize = file.size/1000+' KB';
+                $scope.openedFile = file;
+                $scope.filesize = file.size/1000+' KB';
+                $scope.repoParam = file.path.substr(0,file.path.indexOf('/'));
+                $scope.fileParam = file._id; 
                 document.getElementById('content').innerText = '';
                 document.getElementById('lines').innerText = '';
                 document.getElementById('content').innerText += res.data;
@@ -221,6 +234,44 @@ angular.module('mean.repos').controller('ReposController', ['$scope', 'Global', 
             document.getElementById('content').innerHTML = "<strong>There was some problem with the server.</strong>";
         });
     };
+
+}]).controller('EditorController', ['$scope', 'Global', 'Repos','$stateParams',
+  function($scope, Global, Repos, $stateParams) {
+    $scope.file = $stateParams.repo;
+    $scope.init = function() {
+      var firepadRef = getExampleRef();
+      // Create CodeMirror (with lineWrapping on).
+      var codeMirror = CodeMirror(document.getElementById('firepad'), { lineNumbers:true,lineWrapping: true, mode:'javascript'});
+      // Create a random ID to use as our user ID (we must give this to firepad and FirepadUserList).
+      //var userId = Math.floor(Math.random() * 9999999999).toString();
+      // Create Firepad (with rich text features and our desired userId).
+      var firepad = Firepad.fromCodeMirror(firepadRef, codeMirror,
+          { richTextToolbar: false, richTextShortcuts: false});
+      // Create FirepadUserList (with our desired userId).
+      //var firepadUserList = FirepadUserList.fromDiv(firepadRef.child('users'),document.getElementById('userlist'), userId);
+      // Initialize contents.
+      firepad.on('ready', function() {
+        if (firepad.isHistoryEmpty()) {
+            firepad.setText('Check out the user list to the left!');
+        }
+      });
+    }
+
+    function getExampleRef() {
+      var ref = new Firebase('https://codeyard.firebaseIO.com');
+      var hash = window.location.hash.replace(/#!\/edit/g, '');
+      if (hash) {
+        ref = ref.child(hash);
+      } else {
+        ref = ref.push(); // generate unique location.
+        window.location = window.location + '#' + ref.key(); // add it as a hash to the URL.
+      }
+      if (typeof console !== 'undefined')
+        console.log('Firebase data: ', ref.toString());
+      return ref;
+    }
+
+
 
 }]).controller('WikiController', ['$scope', 'Global', 'Repos',
   function($scope, Global, Repos) {

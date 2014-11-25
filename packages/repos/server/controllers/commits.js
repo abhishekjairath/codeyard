@@ -129,3 +129,97 @@ exports.createCommit = function(req,res){
     	res.send(200,'Commit saved.');
 	});
 };
+
+exports.commitsCount = function(req,res){
+	var username = req.params.username,
+		result = {};
+
+	Commit.find({'contributor.username':username}).sort('-created').exec(function(err,response){
+		if(err){
+			console.log(err);
+			result = {
+				'error':1,
+				'error_msg':'There was an error while fetching commit calender.'
+			};
+		}
+		else{
+			result = {
+				'error':0,
+				'error_msg':null,
+				'result':response
+			};
+		}
+	});
+};
+
+exports.threeLatestCommits = function (req,res){
+	var result = {};
+	Commit.find({'user.username':req.params.username},'created desc').sort({created: -1}).limit(3).exec(function(err,response){
+		if(err){
+			console.log(err);
+			result = {
+				'error':1,
+				'error_msg':'There was an error while fetching commits of the use'
+			};
+		}
+		else{
+			result = {
+				'error':0,
+				'error_msg':null,
+				'response':response
+			};
+		}
+		res.jsonp(result);
+	});
+};
+
+exports.maxRepoCommits = function (req,res){
+	var result = {};
+	Commit.aggregate([{$match:{"user.username":req.params.username}},{$group:{ _id: "$repo.slug", count: { $sum: 1 }}}])
+	.exec(function(err,response){
+		if(err){
+			console.log(err);
+			result = {
+				'error':1,
+				'error_msg':'There was an error while fetching commits of the use'
+			};
+		}
+		else{
+			result = {
+				'error':0,
+				'error_msg':null,
+				'response':response
+			};
+		}
+		res.jsonp(result);
+	});
+};
+
+exports.calendarCommits = function(req,res){
+    var result = {};
+    var from = new Date(req.query.from);
+    var to = new Date(req.query.to);
+    Commit.aggregate([{$match:{"user.username":req.params.username,created:{$gte:from,$lt:to}}}
+    	,{	$group:{
+    		    _id:{day:{$dayOfYear:"$created"},year:{$year:"$created"}},
+    		    count:{$sum:1},
+    		    commits: {$push:{desc:"$desc",repo:"$repo.slug",id:"$_id"}}
+    	    }
+    }]).exec(function(err,response){
+		if(err){
+			console.log(err);
+			result = {
+				'error':1,
+				'error_msg':'There was an error while fetching commits of the use'
+			};
+		}
+		else{
+			result = {
+				'error':0,
+				'error_msg':null,
+				'response':response
+			};
+		}
+		res.jsonp(result);
+	});
+};
