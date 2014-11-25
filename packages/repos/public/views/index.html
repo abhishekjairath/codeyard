@@ -1,8 +1,12 @@
 <section data-ng-controller="ReposController">
   <div class="container">
   <div class="col-md-3 user-data">
-        <div class="user-img"><span class="glyphicon glyphicon-user"></span>
-          <!--img src="/theme/assets/img/me.jpg"/-->
+       <div class="user-img" ng-mouseover="addPic=true;" ng-mouseleave="addPic=false;">
+            <span class="glyphicon glyphicon-user" ng-show="!global.user.me.pic"></span>
+            <img src="/users/assets/img/userImages/{{global.user.me.pic}}" ng-show="global.user.me.pic" />
+            <div class="profile-dp">
+                <input ng-show="addPic" class="custom-file-dp" type="file" id="dp">
+            </div>
         </div>
         <h2>{{global.user.name}}</h2>
         <div class="division"></div>
@@ -29,7 +33,7 @@
           <li class="{{articles_tab}}" data-ng-click="menu('articles');">
             <a ui-sref="repos.articles">Articles</a>
           </li>
-      </ul>
+      </ul><br>
       <div ui-view>
         <div data-ng-init="menu('myrepos');">
           <div class="filters" data-ng-init="filter('all');">

@@ -39,11 +39,13 @@ module.exports = function(Repos, app, auth, database) {
   app.get('/repos/file/:filepath', repos.getFile);
   app.post('/repos/file/delete', repos.deleteFile);
 
-
   /************************************/
   app.post('/repos/folder', repos.createFolder);
   app.post('/repos/folder/delete', repos.deleteFolder);
 
   app.post('/repos/repo',repos.uploadRepo);
   app.post('/repos/:repoid/collaborators', repos.addCollab);
+
+  //app.get('/:username/repos/latest', repos.latestRepo);
+  //app.get('/:username/commits/latest', repos.latestCommit);
 };

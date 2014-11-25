@@ -6,7 +6,7 @@ module.exports = {
     debug: true
   },
   app: {
-    name: 'MEAN - FullStack JS - Development'
+    name: 'Codeyard'
   },
   facebook: {
     clientID: 'DEFAULT_APP_ID',
@@ -41,7 +41,7 @@ module.exports = {
       pass: 'PASSWORD'
     }
   },
-  repoPath : '/home/abhishek/Documents/repos/',
+  repoPath : 'C:/Users/dit/Desktop/NODE/repos/',
   redis : {
     pushCommits : 'hotqueue:cpush'
   }

@@ -7,8 +7,11 @@
     	        	{{global.user.username}} / {{repo.slug}}
     	        	<span class="glyphicon glyphicon-trash pull-right link" title="Delete this repo" ng-click="delRepo=true;"></span>
                     <a class="pull-right" href="/repos/download/{{repo.slug}}">
-                            <span class="glyphicon glyphicon-cloud-download" title="Download this Repo"></span>
+                        <span class="glyphicon glyphicon-cloud-download" title="Download this Repo"></span>
                     </a>
+                    <button class="btn btn-default pull-right" ui-sref="editor({repo:repoParam})">
+                        Go Real-Time
+                    </button>
                     <div data-ng-show="delRepo;" class="alert alert-danger editDesc">
                         <strong>Are you sure you want to delete this repository ?</strong>
                         <span class="glyphicon glyphicon-ok-circle link" data-ng-click="deleteRepo(repo.slug);"></span>
@@ -61,12 +64,13 @@
                                 <span ng-show="file.tag=='folder'">
                                     <span class="glyphicon glyphicon-folder-close"></span>
                                     <a href="" ng-click="pathFromView(file.slug);">{{file.name}}</a>
+                                    <span class="glyphicon glyphicon-trash pull-right link" title="Delete folder" data-ng-click="deleteFolder(file.path,repo.slug,file.slug)"></span>
                                 </span>
                                 <span ng-show="file.tag!='folder'">
                                     <span class="glyphicon glyphicon-file"></span>
                                     <a href="" ng-click="viewFile(file);">{{file.name}}</a>
+                                    <span class="glyphicon glyphicon-trash pull-right link" title="Delete file" data-ng-click="deleteFile(file._id,file.path)"></span>
                                 </span>
-                                <span class="glyphicon glyphicon-trash pull-right link" title="Delete file" data-ng-click="deleteFile(file._id,file.path)"></span>
                             </li> 
                             <li class="list-group-item list-group-item-info" ng-if="files.length==0">
                                 Folder Empty
@@ -83,7 +87,9 @@
                     </div>
                     <div ng-show="list==false;">
                         <div class="file-content">
-                            <h2>{{openedFile}} | <span class="file-size">{{fileSize}}</span></h2>
+                            <h2>
+                                {{openedFile.name}} | <span class="file-size">{{filesize}}</span>
+                            </h2>
                             <div class="division"></div>
                             <div id="lines" class="col-md-1" style="border-right:1px solid #eeeeee;text-align:right;color:rgb(225,51,26);"></div>
                             <div id="content" class="col-md-11" style="line-height: 20px;"></div>

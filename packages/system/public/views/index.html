@@ -47,8 +47,12 @@
 <!--AFTER LOGIN VIEW-->
 <div class="container" data-ng-show="global.authenticated" >
 	<div class="col-md-3 user-data" data-ng-init="getUserData();">
-        <div class="user-img"><span class="glyphicon glyphicon-user"></span>
-        	<!--img src="/theme/assets/img/me.jpg"/-->
+        <div class="user-img" ng-mouseover="addPic=true;" ng-mouseleave="addPic=false;">
+            <span class="glyphicon glyphicon-user" ng-show="!global.user.me.pic"></span>
+            <img src="/users/assets/img/userImages/{{global.user.me.pic}}" ng-show="global.user.me.pic" />
+            <div class="profile-dp">
+                <input ng-show="addPic" class="custom-file-dp" type="file" id="dp">
+            </div>
         </div>
         <h2>{{global.user.name}}</h2>
         <div class="division"></div>
@@ -62,9 +66,9 @@
 	</div>
     <div class="col-md-9">
     	<div class="welcome">
-    	<div class="pull-right" title="Account Settings">
+    	<!--div class="pull-right" title="Account Settings">
             	<span class="glyphicon glyphicon-cog"></span>
-        </div>
+        </div-->
         <a ui-sref="repos.create">
 	    <div class="pull-right" title="Create a new Repo">
             	<span class="glyphicon glyphicon-plus"></span>
@@ -74,27 +78,26 @@
         <h3>Welcome to your Yard !</h3>
         </div>
         <div class="division"></div>
-        <div class="panel panel-default">
+        <div class="panel panel-default" ng-if="maxCommits.length!=0">
         	<div class="panel-heading">Repositories Contributed to</div>
         	<div class="panel-body">
                 <div class="list-group">
-                	<a href="#" class="list-group-item">
-                		<span class="badge">14</span>
-                        <h4 class="list-group-item-heading">Real-Time-Image-Share</h4>
-                        <p class="list-group-item-text">An image sharing app like snapchat using...</p>
+                	<a href="#!/repos/{{max._id}}" class="list-group-item" data-ng-repeat="max in maxCommits">
+                		<span class="badge" title="contributions">{{max.count}}</span>
+                        <h4 class="list-group-item-heading">{{max._id}}</h4>
                     </a>
                 </div>
             </div>
         </div>
-        <div class="panel panel-default">
+        <div class="panel panel-default" ng-if="latestCommits.length!=0">
         	<div class="panel-heading">Latest Commits</div>
         	<div class="panel-body">
                 <div class="list-group">
-                	<a href="#" class="list-group-item">
-                        <span class="badge">6 Oct 07:30</span>
-                        <h4 class="list-group-item-heading">Updated picture timer</h4>
+                	<a href="#!/repos/commits/{{commit._id}}" class="list-group-item" data-ng-repeat="commit in latestCommits">
+                        <span class="badge">{{commit.created | date:'medium'}}</span>
+                        <h4 class="list-group-item-heading">{{commit.desc}}</h4>
                         <p class="list-group-item-text">
-                        	Commit - <span class="pink">2ba774bee393b732aa0da228ae6437cd4998804d</span>
+                        	Commit - <span class="pink">{{commit._id}}</span>
                         </p>
                     </a>
                 </div>
@@ -115,6 +118,11 @@
         		    	More</h5>
         		    </span>
         	</div>
+        </div>
+        <div ng-show="contributions!=null" class="list-group">
+            <a href="#!/repos/commits/{{contribution.id}}" class="list-group-item" data-ng-repeat="contribution in contributions">
+                <span class="blue">{{contribution.repo}} : {{contribution.desc}}</span>
+            </a>
         </div>
     </div>
 </div>

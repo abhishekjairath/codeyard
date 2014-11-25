@@ -13,8 +13,12 @@ module.exports = function(Repos, app, auth, database, io) {
     			res.jsonp(result);
     	});
     });
+
     app.get('/repos/:reposlug/commits', commits.repoCommits);
     app.get('/commits/:id', commits.getCommit);
-
     app.post('/commits', commits.createCommit);
+    //app.get(':username/commitscount', commits.commitsCount);
+    app.get('/commits/latest/:username',commits.threeLatestCommits);
+    app.get('/commits/max/:username',commits.maxRepoCommits);
+    app.get('/commits/calendar/:username',commits.calendarCommits);
 };

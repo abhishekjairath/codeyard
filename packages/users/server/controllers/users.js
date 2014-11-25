@@ -6,8 +6,7 @@
 var mongoose = require('mongoose'),
   User = mongoose.model('User'),
   async = require('async'),
-  mean = require('meanio'),
-  config = mean.loadConfig(),
+  config = require('meanio').loadConfig(),
   crypto = require('crypto'),
   nodemailer = require('nodemailer'),
   templates = require('../template');
@@ -107,6 +106,29 @@ exports.create = function(req, res, next) {
  */
 exports.me = function(req, res) {
   res.json(req.user || null);
+};
+
+exports.dp = function(req, res) {
+  var imageType = /^image\/[a-z]+/;
+  var Imager = require('imager');
+  var config = require('../../../../config/imager');
+  if(imageType.test(req.files.file.mimetype)){    
+    var imagerS3 = new Imager(config, 'Local');
+    imagerS3.upload([req.files.file], function(err,cdnUri,avatar) {
+         if (err) {
+            console.log(err);
+            res.json(500,{error: 'Cannot upload the image'});
+        }else {
+                    User.findOneAndUpdate({username:req.body.username},{pic:'large_'+avatar},function(err){
+                      if(err){
+                        res.status(500).json({msg:'Database not responding'});
+                      }else
+                        res.status(200).json({msg:'large_'+avatar});
+                    });
+              }
+    }, 'users');
+  }else
+    res.status(500).json({msg:'Not an image'});
 };
 
 /**
