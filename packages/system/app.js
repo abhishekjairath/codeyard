@@ -6,7 +6,11 @@
 var mean = require('meanio'),
     Module = mean.Module,
     favicon = require('serve-favicon'),
-    express = require('express');
+    express = require('express'),
+    redis = require("redis"),
+    client = redis.createClient(),
+    io;
+
 
 var System = new Module('system');
 
@@ -15,12 +19,26 @@ var System = new Module('system');
  * Dependency injection is used to define required modules
  */
 System.register(function(app, auth, database) {
-
   mean.resolve(function(http){
-    var io = require('socket.io')(http);
+    io = require('socket.io')(http);
     mean.register('io',io);
+    io.on('connection',function (socket){
+      console.log("IO initiated");
+      console.log(socket.id);
+      socket.on('setClient',function(data){
+        client.set(data,socket.id, function(err){
+          if(err)
+            console.log('Error setting user and socket');
+          else
+            console.log('CLient set successfully');
+        });
+      });
+      socket.on('disconnect',function(){
+        console.log("Disconnected " + socket.id);
+      });
+    }); 
   });
-
+  
   System.menus.add({
     title: 'Dashboard',
     link: 'home',
@@ -28,7 +46,7 @@ System.register(function(app, auth, database) {
     menu: 'main'
   });
   //We enable routing. By default the Package Object is passed to the routes
-  System.routes(app, auth, database);
+  System.routes(app, auth, database,io);
 
   System.aggregateAsset('css', 'common.css');
 

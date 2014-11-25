@@ -18,7 +18,5 @@ angular.module('mean.system').factory('Global', [
   }
 ])
 .factory('mySocket', function (socketFactory) {
-    return socketFactory({
-      ioSocket: io('/cymain')
-    });
+    return socketFactory();
 });

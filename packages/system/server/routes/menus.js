@@ -21,8 +21,6 @@ module.exports = function(System, app, auth, database) {
         })
       });
 
-      if(req.user)
-        index.socketHandler(req);
-        res.json(items);
+      res.json(items);
     });
 };

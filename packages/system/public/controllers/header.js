@@ -32,12 +32,28 @@ angular.module('mean.system').controller('HeaderController', ['$scope', '$rootSc
         authenticated: !! $rootScope.user,
         user: $rootScope.user
       };
+      if($scope.global.authenticated)
+      mySocket.emit('setClient',$scope.global.user._id);
     });
 
-    mySocket.on('connect', function(data){
-        console.log('Connection Succcessfull');
-        console.log(data);
-      });
+    if($scope.global.authenticated)
+      mySocket.emit('setClient',$scope.global.user._id);
 
+    mySocket.on('commit_done',function(data){
+      console.log(data);
+    });
+  }
+])
+.controller('notificationController',['$scope', '$rootScope', 'Global','mySocket',
+  function($scope, $rootScope, Global, mySocket) {
+    $scope.global = Global;
+    $scope.notifContent = 1;
+    $scope.closeNotif = function(){
+      $scope.notifContent = 0;
+    }
+    mySocket.on('commit_done',function(data){
+      $scope.commitId = data;
+      $scope.notifContent = 'Commit has been processed.';
+    });
   }
 ]);
