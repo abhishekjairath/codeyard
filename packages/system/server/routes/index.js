@@ -5,27 +5,29 @@ module.exports = function(System, app, auth, database,io) {
   // Home route
   var index = require('../controllers/index'),
   	redis = require("redis"),
-    client = redis.createClient();
-  app.route('/')
-    .get(index.render);
-
+    client = redis.createClient(),
+    getclient = redis.createClient();
+  
+  app.route('/').get(index.render);
   app.get('/stats',index.getStats);
 
 
-//Redis cy-pullcommits channel listener and socket emitter
+  //Redis cy-pullcommits channel listener and socket emitter
+  client.subscribe('cy-pullcommits');
 
-/*client.subscribe('cy-pullcommits');
-client.on("subscribe", function (channel, count) {
-	console.log('Now subscribeed to channel '+ channel);
-	mean.resolve(function(io){
-		io = io;
-	});
-});
-client.on("message", function (channel, message) {
+  client.on("subscribe", function (channel, count) {
+	 console.log('Now subscribeed to channel '+ channel);
+  });
+
+  client.on("message", function (channel, message) {
     console.log(message);
-    //io.to(socket.id).emit('commit_done',message);
-});*//*
-var queueListener = function(){
+    var res = JSON.parse(message);
+    getclient.get(res.userid,function(err,socket){
+      io.to(socket).emit('commit_done',res.commitid);
+    });
+  });
+
+/*var queueListener = function(){
   client.lpop('hotqueue:cpull',function(err,res){
     res = JSON.parse(res);
     if(res){
@@ -36,4 +38,5 @@ var queueListener = function(){
   });
   setInterval(queueListener,15000);
 };*/
+
 };
