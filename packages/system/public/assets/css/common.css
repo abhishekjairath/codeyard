@@ -42,16 +42,25 @@ footer p {
 }
 .notify {
   display: block;
-  background: #fff;
+  background: #489E87;
+  color: #fff;
   padding: 12px 18px;
-  max-width: 400px;
-  margin: 0 auto;
-  cursor: pointer;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
-  margin-bottom: 20px;
-  box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 2px 0px;
+  margin-top: 30px;
+  height: 35px;
+  text-decoration: none;
+  text-align: center;
+  box-shadow: rgba(0, 0, 0, 0.3) -1px 1px 2px 0px;
+}
+.notifRemove{
+    cursor: pointer;
+    color: #525050;
+}
+.notifRemove:hover{
+    cursor: pointer;
+    color: #fff;
 }
 /*.ng-invalid.ng-dirty{*/
     /*border-color:#FA787E;*/

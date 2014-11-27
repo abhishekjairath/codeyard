@@ -47,7 +47,7 @@ angular.module('mean.system').controller('HeaderController', ['$scope', '$rootSc
 .controller('notificationController',['$scope', '$rootScope', 'Global','mySocket',
   function($scope, $rootScope, Global, mySocket) {
     $scope.global = Global;
-    $scope.notifContent = 1;
+    $scope.notifContent = 0;
     $scope.closeNotif = function(){
       $scope.notifContent = 0;
     }

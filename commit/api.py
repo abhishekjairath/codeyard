@@ -9,6 +9,7 @@ from bson.objectid import ObjectId
 import collections
 import difflib
 import threading
+import redis
 
 def replace(oldfile,newfile):
 	f=open(oldfile,'w')
@@ -121,6 +122,7 @@ def Main():
 
 	response = HotQueue(RESPONSE_QUEUE,serializer=json)
 
+	r = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 	for a in listen.consume():
 		
@@ -145,7 +147,8 @@ def Main():
 		
 		responseobj= {'commitid':str(commitid),'userid':str(commits['user']['id'])}
 
-		response.put(responseobj)
+		#response.put(responseobj)
+		r.publish('cy-pullcommits', json.dumps(responseobj))
 		
 		print commits
 
