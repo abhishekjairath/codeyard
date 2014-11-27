@@ -47,12 +47,13 @@ def func(name,path,isnew,extension,db,repoid,file_dir):
 				addedfinal={'content_then':None,'content_now':changes[l][2:],'line_then':None,'line_now':i,'status':0}
 				updations.append(addedfinal)
 			elif changes[l][0]=='-':
-				if (l<len(changes)+2)&(changes[l+2][0]=='?'):
-					i=i+1
-					j=j+1
-					adddelete={'content_then':changes[l][2:],'content_now':changes[l+1][2:],'line_then':j,'line_now':i,'status':2}
-					updations.append(adddelete)
-					l=l+2
+				if l+2<len(changes):
+					if changes[l+2][0]=='?':
+						i=i+1
+						j=j+1
+						adddelete={'content_then':changes[l][2:],'content_now':changes[l+1][2:],'line_then':j,'line_now':i,'status':2}
+						updations.append(adddelete)
+						l=l+2
 				else:
 					j=j+1
 					deletedfinal={'content_then':changes[l][2:],'content_now':None,'line_then':j,'line_now':None,'status':1}
@@ -64,8 +65,8 @@ def func(name,path,isnew,extension,db,repoid,file_dir):
 		
 		replace(file_dir+path+name,file_dir+path+"temp_"+name)
 		filesize=os.path.getsize(file_dir+path+name)
-		db.repos.update({'_id':ObjectId(repoid),'files.path':path+name},{'$set':{'files.$.size':filesize}})
-
+		db.repos.update({'_id':ObjectId(repoid),'files.path':path+name},{'$set':{'files.$.size':filesize,'updated':datetime.datetime.utcnow()}})
+		
 
 	else:
 		o=open(file_dir+path+"temp_"+name,'r')
@@ -81,8 +82,7 @@ def func(name,path,isnew,extension,db,repoid,file_dir):
 
 		filesize = os.path.getsize(file_dir+path+name)
 		fileupdate={'path':path+name,'tag':extension,'name':name,'size':filesize,'slug':None,'_id':ObjectId()}
-		db.repos.update({'_id':ObjectId(repoid)},{'$push':{'files':fileupdate}})
-
+		db.repos.update({'_id':ObjectId(repoid)},{'$push':{'files':fileupdate,'updated':datetime.datetime.utcnow()}})
 	d['file']=name
 	d['updations']=updations
 	
@@ -125,7 +125,7 @@ def Main():
 	for a in listen.consume():
 		
 		files = []
-		for item in a['file']:
+		for item in a['files']:
 			files.append(func(item['name'],item['path'],item['isnew'],item['extension'],db,a['repoid'],file_dir))
 		
 		commits = {

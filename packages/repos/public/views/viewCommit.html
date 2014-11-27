@@ -11,18 +11,43 @@
        	    <div class="panel-heading">
        		    <div class="panel-title"><span class="glyphicon glyphicon-file"></span>{{file.file}}</div>
        	    </div>
-       	    <div class="commit-view-body">
-       	    	<div data-ng-repeat="update in file.updations">
-       	            <span class="col-md-1 commit-view-line-num">{{update.line}}</span>
-       	            <div class="col-md-11">
-       	            <span class="commit-view-lines bg-success" data-ng-if="update.content_now!='null'">
-       	            	<span class="glyphicon glyphicon-plus"></span>  {{update.content_now}}<br>
-       	            </span>
-       	            <span class="commit-view-lines bg-danger" data-ng-if="update.content_then!='null'">
-       	            	<span class="glyphicon glyphicon-minus"></span>  {{update.content_then}}<br>
-       	            </span>
-       	            </div>
-       	        </div>
+       	    <div class="commit-view-body" data-ng-repeat="update in file.updations">
+                    <span data-ng-if="update.status==0">
+                      <div class="row">
+                      <span class="col-md-1 commit-view-line-num red">{{update.line_then}}</span>
+                      <span class="col-md-1 commit-view-line-num green">{{update.line_now}}</span>
+       	              <span class="col-md-9 commit-view-lines bg-success">
+       	            	    <span class="glyphicon glyphicon-plus"></span>  {{update.content_now}}<br>
+       	              </span>
+                      </div>
+                    </span>
+                    <span data-ng-if="update.status==1">
+                      <div class="row">
+                      <span class="col-md-1 commit-view-line-num red">{{update.line_then}}</span>
+                      <span class="col-md-1 commit-view-line-num green">{{update.line_now}}</span>
+       	              <span class="col-md-9 commit-view-lines bg-danger">
+       	            	  <span class="glyphicon glyphicon-minus"></span>  {{update.content_then}}<br>
+       	              </span>
+                      </div>
+                    </span>
+                    <span  data-ng-if="update.status==2">
+                    <div class="row">
+                      <span class="col-md-1 commit-view-line-num red">{{update.line_then}}</span>
+                      <span class="col-md-1 commit-view-line-num green"></span>
+                      <span class="col-md-9 commit-view-lines bg-danger">
+                        <span class="glyphicon glyphicon-minus"></span>  {{update.content_then}}<br>
+                      </span>
+                    </div>  
+                    </span>
+                    <span data-ng-if="update.status==2">
+                      <div class="row">
+                      <span class="col-md-1 commit-view-line-num red"></span>
+                      <span class="col-md-1 commit-view-line-num green">{{update.line_now}}</span>
+                      <span class="col-md-9 commit-view-lines bg-success" >
+                        <span class="glyphicon glyphicon-plus"></span>  {{update.content_now}}<br>
+                      </span>
+                      </div>
+                    </span>
        	    </div>
     </div>
 </section>
