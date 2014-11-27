@@ -130,5 +130,6 @@
 .green{color:#1e6823;}
 .pink{color:rgb(255,46,255);}
 .gray{color:#eeeeee;}
+.red{color: rgb(225,51,26);}
 #calendar span{border:1px solid #eeeeee;margin: 1px;padding: 0;}
 #calendar span:hover{border:1px solid black;}
