@@ -657,7 +657,7 @@ exports.goRealTime = function(req,res){
 		res.send(500,'Invalid Request to server');
 	else{
 		var key = (new Date()).getTime();
-		client.set(key,req.body);
+		client.set(key,JSON.stringify(req.body));
 		res.send(200,key);
 	}
 };
