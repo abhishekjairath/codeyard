@@ -651,3 +651,13 @@ exports.addCollab = function(req,res){
 		}
 	});
 };
+
+exports.goRealTime = function(req,res){
+	if(!req.body.repo&&!req.body.file&&req.body.user)
+		res.send(500,'Invalid Request to server');
+	else{
+		var key = (new Date()).getTime();
+		client.set(key,req.body);
+		res.send(200,key);
+	}
+};

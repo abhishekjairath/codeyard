@@ -191,7 +191,6 @@ angular.module('mean.repos').controller('ReposController', ['$scope', 'Global', 
             if(res.data){
                 $scope.openedFile = file;
                 $scope.filesize = file.size/1000+' KB';
-                $scope.repoParam = file.path.substr(0,file.path.indexOf('/'));
                 $scope.fileParam = file._id; 
                 document.getElementById('content').innerText = '';
                 document.getElementById('lines').innerText = '';
@@ -216,6 +215,14 @@ angular.module('mean.repos').controller('ReposController', ['$scope', 'Global', 
         }).error(function(data){
             $scope.error = true;
             $scope.error_msg = "Unable to delete file.";
+        });
+    };
+
+    $scope.goRealTime = function(repo,file){
+        Repos.goRealTime({user:$scope.global.user.username,repo:repo,file:file}).success(function(data){
+            $window.open('localhost:8080/home/'+data);
+        }).error(function(data){
+            $scope.error_msg = data;
         });
     };
     

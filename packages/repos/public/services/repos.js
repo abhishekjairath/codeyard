@@ -70,6 +70,11 @@ angular.module('mean.repos').factory('Repos', ['$http',
             headers: {'Content-Type': undefined}
         });
     }
+
+    factory.goRealTime = function(doc){
+      return $http.post('/realtime/register',doc);
+    }
+    
     return factory; 
   }
 ]);
