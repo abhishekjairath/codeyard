@@ -656,8 +656,19 @@ exports.goRealTime = function(req,res){
 	if(!req.body.repo&&!req.body.file&&req.body.user)
 		res.send(500,'Invalid Request to server');
 	else{
-		var key = (new Date()).getTime();
-		client.set(key,JSON.stringify(req.body));
-		res.send(200,key);
+		client.get(req.body.file,function(err,data){
+			if (data===null) {
+				var json = {};
+				json.file = req.body.file;
+				json.repo = req.body.repo;
+				json.room = {};
+				json.room[req.body.user] = null;
+				client.set(req.body.file,JSON.stringify(json));
+			}else{
+				data.room[req.body.user] = null;
+				client.set(req.body.file,JSON.stringify(data));
+			}
+        });
+		res.send(200,req.body.file);
 	}
 };
