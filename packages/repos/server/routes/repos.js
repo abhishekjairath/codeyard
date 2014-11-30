@@ -46,6 +46,8 @@ module.exports = function(Repos, app, auth, database) {
   app.post('/repos/repo',repos.uploadRepo);
   app.post('/repos/:repoid/collaborators', repos.addCollab);
 
+  app.post('/realtime/register', repos.goRealTime);
+
   //app.get('/:username/repos/latest', repos.latestRepo);
   //app.get('/:username/commits/latest', repos.latestCommit);
 };
