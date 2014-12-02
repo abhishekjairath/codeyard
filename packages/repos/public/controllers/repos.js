@@ -219,8 +219,8 @@ angular.module('mean.repos').controller('ReposController', ['$scope', 'Global', 
     };
 
     $scope.goRealTime = function(repo,file){
-        Repos.goRealTime({user:$scope.global.user.username,repo:repo,file:file}).success(function(data){
-            $window.location.assign('http://localhost:8080/editor/'+data);
+       Repos.goRealTime({user:$scope.global.user._id,repo:repo,file:file}).success(function(data){
+            $window.location.assign('http://localhost:8080/editor/'+$scope.global.user._id+'/'+data);
         }).error(function(data){
             $scope.error_msg = data;
         });
