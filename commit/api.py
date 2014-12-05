@@ -1,5 +1,4 @@
 #!/usr/bin/python
-
 import os
 from pymongo import MongoClient 
 from hotqueue import HotQueue
@@ -8,87 +7,128 @@ import datetime
 from bson.objectid import ObjectId
 import collections
 import difflib
-import threading
 import redis
 
-def replace(oldfile,newfile):
-	f=open(oldfile,'w')
-	g=open(newfile,'r')
-	text=g.read()
+def get_file_size(filename):
+	return os.path.getsize(filename)
+	
+def file_readlines(filename):
+	f=open(filename,'r')
+	readlines=f.readlines()
+	f.close()
+	return readlines
+
+def file_read(filename):
+	f=open(filename,'r')
+	read=f.read()
+	f.close()
+	return read
+
+def file_write(filename,text):
+	f=open(filename,'w')
 	f.write(text)
 	f.close()
-	g.close()
-	os.remove(newfile)
 
-def func(name,path,isnew,extension,db,repoid,file_dir):
-	d={}
-	path=path+"/"
-	addedfinal={}
-	deletedfinal={}
-	adddelete={}
-	updations=[]
-	if isnew == "false":
-		file1=open(file_dir+path+name,'r')
-		file2=open(file_dir+path+"temp_"+name,'r')
-		read1=file1.readlines()
-		read2=file2.readlines()
-		file1.close()
-		file2.close()
-		change=difflib.ndiff(read1,read2)
-		changes=[]
-		for line in change:
-			changes.append(line)
-		#print changes
-		l=0
-		i=0
-		j=0
-		while l<len(changes):
-			if changes[l][0]=='+':
-				i=i+1
-				addedfinal={'content_then':None,'content_now':changes[l][2:],'line_then':None,'line_now':i,'status':0}
-				updations.append(addedfinal)
-			elif changes[l][0]=='-':
-				if l+2<len(changes):
-					if changes[l+2][0]=='?':
-						i=i+1
-						j=j+1
-						adddelete={'content_then':changes[l][2:],'content_now':changes[l+1][2:],'line_then':j,'line_now':i,'status':2}
-						updations.append(adddelete)
-						l=l+2
+def delete_file(filename):
+	os.remove(filename)
+
+def rename_file(oldname,newname):
+	os.rename(oldname,newname)
+
+def replace_file(oldfile,newfile):
+	text=file_read(newfile)
+	file_write(oldfile,text)
+	delete_file(newfile)
+
+#function to return dictionary containing updated line details 
+def update_line(stat,c_then,c_now,l_then,l_now):
+	update = {
+
+				'status': stat,
+				'content_then':c_then,
+				'content_now':c_now,
+				'line_then':l_then,
+				'line_now':l_now
+				}
+	return update
+
+def calculate_changes(read1,read2):
+	change = difflib.ndiff(read1,read2)										#store changes in old and newfile
+	updations = []
+	changes = []														#list to read changes
+	for line in change:
+		changes.append(line)
+	l=i=j=0
+	#loop through list of lines updated to store details in updation list
+	while l<len(changes):
+		#for added line
+		if changes[l][0]=='+':
+			i+=1
+			updations.append(update_line(0,None,changes[l][2:],None,i))
+		elif changes[l][0]=='-':
+			#for deleted line
+			if l+2<len(changes):
+				# add delete line with some changes added
+				if changes[l+2][0]=='?':
+					i+=1
+					j+=1
+					updations.append(update_line(2,changes[l][2:],changes[l+1][2:],j,i))
+					l=l+2
+				#add delete line with some changes deleted
+				elif changes[l+1][0]=='?':
+					i+=1
+					j+=1
+					updations.append(update_line(2,changes[l][2:],changes[l+2][2:],j,i))
+					l+=2
+				# deleted lines
 				else:
-					j=j+1
-					deletedfinal={'content_then':changes[l][2:],'content_now':None,'line_then':j,'line_now':None,'status':1}
-					updations.append(deletedfinal)	
+					j+=1
+					updations.append(update_line(1,changes[l][2:],None,j,None))
+			# deleted line	
 			else:
-				i=i+1
-				j=j+1	
-			l=l+1
+				j+=1
+				updations.append(update_line(1,changes[l][2:],None,j,None))
+		else:
+			i+=1
+			j+=1	
 		
-		replace(file_dir+path+name,file_dir+path+"temp_"+name)
-		filesize=os.path.getsize(file_dir+path+name)
-		db.repos.update({'_id':ObjectId(repoid),'files.path':path+name},{'$set':{'files.$.size':filesize,'updated':datetime.datetime.utcnow()}})
-		
+		l+=1
+	return updations		
 
+
+
+#function to calculate diff for files passed 
+def diff_file(name,path,isnew,tag,db,repoid,file_dir):
+	path+="/"
+	oldfile = file_dir+path+name
+	newfile = file_dir+path+"temp_"+name
+	file_commit = {} 															# dictionary to store filename and updations done in single file
+	updations = []																# list of updations in a file
+	#for changes done in old file
+	if isnew == "false":								
+		read1 = file_readlines(oldfile)
+		read2 = file_readlines(newfile)
+		updations = calculate_changes(read1,read2) 
+		replace_file(oldfile,newfile)												#replace content of old file with newfile  
+		filesize = get_file_size(oldfile)
+		db.repos.update({'_id':ObjectId(repoid),'files.path':path+name},\
+						{'$set':{'files.$.size':filesize,'updated':datetime.datetime.utcnow()}})
+	# adding new file 
 	else:
-		o=open(file_dir+path+"temp_"+name,'r')
-		addedfinal=o.readlines()
-		o.close()
-		os.rename(file_dir+path+"temp_"+name,file_dir+path+name)	
+		newfile_read = file_readlines(newfile)
+		rename_file(newfile,oldfile )	
 		i=0
-		while i<len(addedfinal):
-			b={}
-			b={'content_then':None,'content_now':addedfinal[i],'line_then':None,'line_now':i+1,'status':0}
-			updations.append(b)
-			i=i+1
+		while i<len(newfile_read):
+			updations.append(update_line(0,None,newfile_read[i],None,i+1))
+			i+=1
+		filesize = get_file_size(oldfile)
+		fileupdate = {'path':path+name,'tag':tag,'name':name,'size':filesize,'slug':None,'_id':ObjectId()}
+		db.repos.update({'_id':ObjectId(repoid)},{'$push':{'files':fileupdate},\
+												  '$set':{'updated':datetime.datetime.utcnow()}})
 
-		filesize = os.path.getsize(file_dir+path+name)
-		fileupdate={'path':path+name,'tag':extension,'name':name,'size':filesize,'slug':None,'_id':ObjectId()}
-		db.repos.update({'_id':ObjectId(repoid)},{'$push':{'files':fileupdate,'updated':datetime.datetime.utcnow()}})
-	d['file']=name
-	d['updations']=updations
-	
-	
-	return d
+	file_commit['file']=name
+	file_commit['updations']=updations
+	return file_commit
 
 
 
@@ -101,19 +141,15 @@ def func(name,path,isnew,extension,db,repoid,file_dir):
 
 def Main():
 
+	config = file_read('config.json')
+	config = json.loads(config)
+	HOST = config['mongohost']
+	PORT = config['port']
+	DB_NAME = config['database_name']
+	LISTENER_QUEUE = config['listener_queue']
+	RESPONSE_QUEUE = config['response_queue']
 
-	print "\nredis-listener started "
-
-	setupfile=open("config.json",'r')
-	info=setupfile.read()
-	info=json.loads(info)
-	HOST=info['mongohost']
-	PORT=info['port']
-	DB_NAME=info['database_name']
-	LISTENER_QUEUE=info['listener_queue']
-	RESPONSE_QUEUE=info['response_queue']
-
-	file_dir=info['repo_directory']
+	file_dir = config['repo_directory']
 	client = MongoClient(HOST,PORT)
 	
 	db = client[DB_NAME]
@@ -124,19 +160,21 @@ def Main():
 
 	r = redis.StrictRedis(host='localhost', port=6379, db=0)
 
-	for a in listen.consume():
+	print "\nPython-Redis-Listener-Started "
+
+	for item in listen.consume():
 		
 		files = []
-		for item in a['files']:
-			files.append(func(item['name'],item['path'],item['isnew'],item['extension'],db,a['repoid'],file_dir))
+		for _file  in item['files']:
+			files.append(diff_file(_file['name'],_file['path'],_file['isnew'],_file['tag'],db,item['repoid'],file_dir))
 		
 		commits = {
 					'changes'  : files,
-					'desc'     : a['desc'],
+					'desc'     : item['desc'],
 					'created'  : datetime.datetime.utcnow(),
 					#'comment'  : [],
-					'repo'     : {'id':ObjectId(a['repoid']),'slug':a['reposlug']},
-					'user'     : {'id':ObjectId(a['userid']),'username':a['username']}
+					'repo'     : {'id':ObjectId(item['repoid']),'slug':item['reposlug']},
+					'user'     : {'id':ObjectId(item['userid']),'username':item['username']}
 				}
 
 		commitid = db.commits.insert(commits)

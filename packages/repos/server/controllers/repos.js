@@ -79,7 +79,7 @@ var processCommit = function(files,path,queueString,cb){
 	async.eachSeries(files,function(item,iterate){
 		fs.readFile(item.path,function(err,data){
 			file = {
-				'extension' : item.extension,
+				'tag' : item.extension,
 			    'name' : item.originalname,
 				'path' : path[i] 
 			};
@@ -432,7 +432,7 @@ exports.deleteFolder = function(req,res){
 					else{
 						result = {
 							'error':0,
-							'error_msg':'Folder created successfully',
+							'error_msg':'Folder deleted successfully',
 							'response':response1
 						};
 					}
@@ -656,11 +656,8 @@ exports.goRealTime = function(req,res){
 	if(!req.body.repo&&!req.body.file)
 		res.send(500,'Invalid Request to server');
 	else{
-		client.get(req.body.file,function(err,data){
-			if (data===null) {
-				client.set(req.body.file,JSON.stringify({repo:req.body.repo,file:req.body.file}));
-			}
-        });
+		
+		client.set(req.body.file,JSON.stringify({repo:req.body.repo,file:req.body.file}));
 		res.send(200,req.body.file);
 	}
 };
