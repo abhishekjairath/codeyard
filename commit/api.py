@@ -52,7 +52,8 @@ def update_line(stat,c_then,c_now,l_then,l_now):
 				}
 	return update
 
-def calculate_changes(change):
+def calculate_changes(read1,read2):
+	change = difflib.ndiff(read1,read2)										#store changes in old and newfile
 	updations = []
 	changes = []														#list to read changes
 	for line in change:
@@ -97,7 +98,7 @@ def calculate_changes(change):
 
 
 #function to calculate diff for files passed 
-def diff_file(name,path,isnew,extension,db,repoid,file_dir):
+def diff_file(name,path,isnew,tag,db,repoid,file_dir):
 	path+="/"
 	oldfile = file_dir+path+name
 	newfile = file_dir+path+"temp_"+name
@@ -107,8 +108,7 @@ def diff_file(name,path,isnew,extension,db,repoid,file_dir):
 	if isnew == "false":								
 		read1 = file_readlines(oldfile)
 		read2 = file_readlines(newfile)
-		change = difflib.ndiff(read1,read2)										#store changes in old and newfile
-		updations = calculate_changes(change) 
+		updations = calculate_changes(read1,read2) 
 		replace_file(oldfile,newfile)												#replace content of old file with newfile  
 		filesize = get_file_size(oldfile)
 		db.repos.update({'_id':ObjectId(repoid),'files.path':path+name},\
@@ -122,7 +122,7 @@ def diff_file(name,path,isnew,extension,db,repoid,file_dir):
 			updations.append(update_line(0,None,newfile_read[i],None,i+1))
 			i+=1
 		filesize = get_file_size(oldfile)
-		fileupdate = {'path':path+name,'tag':extension,'name':name,'size':filesize,'slug':None,'_id':ObjectId()}
+		fileupdate = {'path':path+name,'tag':tag,'name':name,'size':filesize,'slug':None,'_id':ObjectId()}
 		db.repos.update({'_id':ObjectId(repoid)},{'$push':{'files':fileupdate},\
 												  '$set':{'updated':datetime.datetime.utcnow()}})
 
@@ -160,13 +160,13 @@ def Main():
 
 	r = redis.StrictRedis(host='localhost', port=6379, db=0)
 
-	print "\nredis-listener started "
+	print "\nPython-Redis-Listener-Started "
 
 	for item in listen.consume():
 		
 		files = []
 		for _file  in item['files']:
-			files.append(diff_file(_file['name'],_file['path'],_file['isnew'],_file['extension'],db,item['repoid'],file_dir))
+			files.append(diff_file(_file['name'],_file['path'],_file['isnew'],_file['tag'],db,item['repoid'],file_dir))
 		
 		commits = {
 					'changes'  : files,
